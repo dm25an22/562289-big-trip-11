@@ -1,7 +1,7 @@
 # Личный проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
 * Студент: [Daniel Mironenko](https://up.htmlacademy.ru/ecmascript/11/user/562289).
-* Наставник: `Неизвестно`.
+* Наставник: `Артём Матковский`.
 
 ---
 
