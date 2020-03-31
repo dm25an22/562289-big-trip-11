@@ -357,11 +357,11 @@ renderElementTemplate(tripEvents, createDayCounterTemplate());
 const dayContainer = tripEvents.querySelector(`.trip-days`);
 
 for (let i = 0; i < DAY_NUMBER; i++) {
-  renderElementTemplate(dayContainer, createDayTemplate()) 
+  renderElementTemplate(dayContainer, createDayTemplate());
   const tripEventsContainers = tripEvents.querySelectorAll(`.trip-events__list`);
 
   for (let k = 0; k < QUANTITY_PINS; k++) {
-  renderElementTemplate(tripEventsContainers[i], createEventPointTemplate());
+    renderElementTemplate(tripEventsContainers[i], createEventPointTemplate());
   }
 }
 
