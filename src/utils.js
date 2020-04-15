@@ -1,16 +1,5 @@
 import {months} from "./consts";
 
-const castTimeFormat = (value) => {
-  return value < 10 ? `0${value}` : String(value);
-};
-
-const getFormatTime = (date) => {
-  const hour = castTimeFormat(date.getHours());
-  const minute = castTimeFormat(date.getMinutes());
-
-  return `${hour}:${minute}`;
-};
-
 const getRandomNumber = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -22,31 +11,6 @@ const getRandomItem = (arr) => {
   return arr[getRandomNumber(0, arr.length - 1)];
 };
 
-const getRandomStartDate = () => {
-  const targetDate = new Date();
-};
-
-const getRandomEndDate = () => {
-
-};
-
-// const getRandomDate = () => {
-//   const targetDate = new Date();
-//   const sign = Math.random() > 0.5 ? 1 : -1;
-//   const diffValue = sign * getRandomNumber(0, 7);
-
-//   targetDate.setDate(targetDate.getDate() + diffValue);
-//   targetDate.setHours(getRandomNumber(0, 23), getRandomNumber(0, 59));
-
-//   return targetDate;
-// };
-
-// const getStartDate = (currentDate) => {
-//   currentDate.setDate(currentDate.getDate() + 1);
-
-//   return currentDate;
-// };
-
 const getFormatMonthDate = (date) => {
   const monthIndex = date.getMonth();
   const month = months[monthIndex];
@@ -54,4 +18,46 @@ const getFormatMonthDate = (date) => {
   return month;
 };
 
-export {getFormatTime, getRandomNumber, getRandomItem, getFormatMonthDate};
+const castTimeFormat = (value) => {
+  value = String(value);
+
+  let result;
+
+  if (value.length === 4) {
+    result = `${value.slice(2)}`;
+  } else if (value < 10) {
+    result = `0${value}`;
+  } else {
+    result = String(value);
+  }
+
+  return result;
+};
+
+const castTimeFormatForEdit = (date) => {
+  const year = castTimeFormat(date.getFullYear());
+  const month = castTimeFormat(date.getMonth() + 1);
+  const day = castTimeFormat(date.getDate());
+  const hour = castTimeFormat(date.getHours());
+  const minutes = castTimeFormat(date.getMinutes());
+
+  return `${year}/${month}/${day} ${hour}:${minutes}`;
+};
+
+const getDurationTime = (start, end) => {
+  const diff = end.getTime() - start.getTime();
+
+  let hours;
+  let minutes;
+
+  let minutesDiff = diff / 60 / 1000;
+  let hoursdDiff = diff / 3600 / 1000;
+
+  hours = Math.floor(hoursdDiff);
+  minutes = minutesDiff - 60 * hours;
+
+  return `${hours > 0 ? `${hours}H` : ``} ${minutes}M`;
+};
+
+
+export {getRandomNumber, getRandomItem, getFormatMonthDate, castTimeFormat, castTimeFormatForEdit, getDurationTime};

@@ -1,3 +1,5 @@
+import {castTimeFormatForEdit} from "../utils";
+
 const renderTypeIcon = (routePoint) => {
   return (
     `<div class="event__type-list">
@@ -59,8 +61,8 @@ const renderTypeIcon = (routePoint) => {
       </div>
     </fieldset>
   </div>`
-  )
-}
+  );
+};
 
 const renderOffersMurkup = (offers) => {
   return offers.map((it) => {
@@ -87,13 +89,16 @@ const renderImgMurkup = (photos) => {
 };
 
 export const createEventEditTemplate = (dataPoint) => {
-  const {routePoint, destination, typeRoutePoints, eventPrice, offer, description, photos} = dataPoint;
+  const {routePoint, destination, typeRoutePoints, eventPrice, offer, description, photos, start, end} = dataPoint;
 
-  const routePointWithType = typeRoutePoints === `movement` ? `${routePoint} to` : `${routePoint} in`;
+  const routePointWithType = typeRoutePoints === `transfer` ? `${routePoint} to` : `${routePoint} in`;
 
   const imgMurkup = renderImgMurkup(photos);
   const offerMurkup = renderOffersMurkup(offer);
   const typeIcon = renderTypeIcon(routePoint);
+
+  const startData = castTimeFormatForEdit(start);
+  const endData = castTimeFormatForEdit(end);
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -124,12 +129,12 @@ export const createEventEditTemplate = (dataPoint) => {
           <label class="visually-hidden" for="event-start-time-1">
             From
           </label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="18/03/19 00:00">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startData}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="18/03/19 00:00">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endData}">
         </div>
 
         <div class="event__field-group  event__field-group--price">

@@ -1,4 +1,4 @@
-import {getFormatTime} from "../utils";
+import {castTimeFormat, getDurationTime} from "../utils";
 
 export const renderOffers = (offers) => {
   return offers.slice(0, 3).map((it) => {
@@ -11,16 +11,19 @@ export const renderOffers = (offers) => {
 };
 
 export const createEventPointTemplate = (dataPoint) => {
-  const {routePoint, destination, dueDate, eventPrice, offer, typeRoutePoints, icon} = dataPoint;
+  const {routePoint, destination, eventPrice, offer, typeRoutePoints, icon, start, end} = dataPoint;
 
   const renderOfferMurkup = renderOffers(offer);
 
-  const routePointWithType = typeRoutePoints === `movement` ? `${routePoint} to` : `${routePoint} in`;
+  const satrHours = castTimeFormat(start.getHours());
+  const starMinute = castTimeFormat(start.getMinutes());
 
-  const date = dueDate;
-  const startTime = getFormatTime(date);
-  const endTime = `${date.getHours() + 1}:${date.getMinutes()}`;
-  const duration = ``;
+  const endHours = castTimeFormat(end.getHours());
+  const endMinute = castTimeFormat(end.getMinutes());
+
+  const duration = getDurationTime(start, end);
+
+  const routePointWithType = typeRoutePoints === `transfer` ? `${routePoint} to` : `${routePoint} in`;
 
   return (
     `<li class="trip-events__item">
@@ -32,11 +35,11 @@ export const createEventPointTemplate = (dataPoint) => {
 
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="2019-03-19T11:20">${startTime}</time>
+            <time class="event__start-time" datetime="2019-03-19T11:20">${satrHours}:${starMinute}</time>
             &mdash;
-            <time class="event__end-time" datetime="2019-03-19T13:00">${endTime}</time>
+            <time class="event__end-time" datetime="2019-03-19T13:00">${endHours}:${endMinute}</time>
           </p>
-          <p class="event__duration">1H 20M</p>
+          <p class="event__duration">${duration}</p>
         </div>
 
         <p class="event__price">
