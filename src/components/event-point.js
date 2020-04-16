@@ -1,7 +1,8 @@
-import {castTimeFormat, getDurationTime} from "../utils";
+import {getDurationTime, getStartEndEvent} from "../date-helpers";
+import {LabelOfType} from "../mock/points";
 
 export const renderOffers = (offers) => {
-  return offers.slice(0, 3).map((it) => {
+  return offers.slice(0, 3).filter((el) => el.isChecked).map((it) => {
     return `<li class="event__offer">
       <span class="event__offer-title">${it.title}</span>
       ${it.title ? `&plus;&euro;&nbsp;` : ``}
@@ -11,19 +12,12 @@ export const renderOffers = (offers) => {
 };
 
 export const createEventPointTemplate = (dataPoint) => {
-  const {routePoint, destination, eventPrice, offer, typeRoutePoints, icon, start, end} = dataPoint;
+  const {type, destination, eventPrice, offer, icon, start, end} = dataPoint;
 
   const renderOfferMurkup = renderOffers(offer);
-
-  const satrHours = castTimeFormat(start.getHours());
-  const starMinute = castTimeFormat(start.getMinutes());
-
-  const endHours = castTimeFormat(end.getHours());
-  const endMinute = castTimeFormat(end.getMinutes());
-
+  const [satrHours, starMinute, endHours, endMinute] = getStartEndEvent(start, end);
   const duration = getDurationTime(start, end);
 
-  const routePointWithType = typeRoutePoints === `transfer` ? `${routePoint} to` : `${routePoint} in`;
 
   return (
     `<li class="trip-events__item">
@@ -31,7 +25,7 @@ export const createEventPointTemplate = (dataPoint) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${icon}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${routePointWithType} ${destination}</h3>
+        <h3 class="event__title">${type} ${LabelOfType[type]} ${destination}</h3>
 
         <div class="event__schedule">
           <p class="event__time">

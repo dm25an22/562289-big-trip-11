@@ -1,4 +1,5 @@
-import {castTimeFormatForEdit} from "../utils";
+import {castTimeFormatForEdit} from "../date-helpers";
+import {LabelOfType} from "../mock/points";
 
 const renderTypeIcon = (routePoint) => {
   return (
@@ -69,7 +70,7 @@ const renderOffersMurkup = (offers) => {
     const {title, price} = it;
     return (
       `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${title}" type="checkbox" name="event-offer-${title}">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${title}" type="checkbox" name="event-offer-${title}" ${it.isChecked ? `checked` : ``}>
         <label class="event__offer-label" for="event-offer-${title}">
           <span class="event__offer-title">${title}</span>
           &plus;
@@ -89,9 +90,7 @@ const renderImgMurkup = (photos) => {
 };
 
 export const createEventEditTemplate = (dataPoint) => {
-  const {routePoint, destination, typeRoutePoints, eventPrice, offer, description, photos, start, end} = dataPoint;
-
-  const routePointWithType = typeRoutePoints === `transfer` ? `${routePoint} to` : `${routePoint} in`;
+  const {routePoint, destination, type, eventPrice, offer, description, photos, start, end} = dataPoint;
 
   const imgMurkup = renderImgMurkup(photos);
   const offerMurkup = renderOffersMurkup(offer);
@@ -106,7 +105,7 @@ export const createEventEditTemplate = (dataPoint) => {
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/${routePoint.toLowerCase()}.png" alt="Event type icon">
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
             ${typeIcon}
@@ -114,7 +113,7 @@ export const createEventEditTemplate = (dataPoint) => {
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            ${routePointWithType}
+            ${type} ${LabelOfType[type]}
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
           <datalist id="destination-list-1">

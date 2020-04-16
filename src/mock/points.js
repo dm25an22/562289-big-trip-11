@@ -1,23 +1,23 @@
-import {getRandomNumber, getRandomItem, castTimeFormat} from "../utils";
+import {getRandomNumber, getRandomItem, getRandomBoolean} from "../utils";
+import {castTimeFormat} from "../date-helpers";
+import {LABEL_IN, LABEL_TO} from "../consts";
 
 const QUANTITY_PINS = 16;
 
-const routePoints = {
-  transfer: [
-    `Taxi`,
-    `Bus`,
-    `Train`,
-    `Ship`,
-    `Transport`,
-    `Drive`,
-    `Flight`
-  ],
-  activity: [
-    `Check-in`,
-    `Sightseeing`,
-    `Restaurant`
-  ]
+const LabelOfType = {
+  'Taxi': LABEL_TO,
+  'Bus': LABEL_TO,
+  'Train': LABEL_TO,
+  'Ship': LABEL_TO,
+  'Transport': LABEL_TO,
+  'Drive': LABEL_TO,
+  'Flight': LABEL_TO,
+  'Sightseeing': LABEL_IN,
+  'Restaurant': LABEL_IN,
+  'Check-in': LABEL_IN
 };
+
+const typeEvents = Object.keys(LabelOfType);
 
 const cities = [
   `Bergen`,
@@ -35,37 +35,44 @@ const services = [
   {
     type: `meal`,
     title: `Add breakfast`,
-    price: getRandomNumber(10, 30)
+    price: getRandomNumber(10, 30),
+    isChecked: getRandomBoolean()
   },
   {
     type: `luggage`,
     title: `Add luggage`,
-    price: getRandomNumber(10, 20)
+    price: getRandomNumber(10, 20),
+    isChecked: getRandomBoolean()
   },
   {
     type: `transfer`,
     title: `Book tickets`,
-    price: getRandomNumber(5, 15)
+    price: getRandomNumber(5, 15),
+    isChecked: getRandomBoolean()
   },
   {
     type: `comfort`,
     title: `Switch to comfort`,
-    price: getRandomNumber(10, 30)
+    price: getRandomNumber(10, 30),
+    isChecked: getRandomBoolean()
   },
   {
     type: `meal`,
     title: `Lunch in city`,
-    price: getRandomNumber(30, 70)
+    price: getRandomNumber(30, 70),
+    isChecked: getRandomBoolean()
   },
   {
     type: `transfer`,
     title: `Order Uber`,
-    price: getRandomNumber(10, 30)
+    price: getRandomNumber(10, 30),
+    isChecked: getRandomBoolean()
   },
   {
     type: `transfer`,
     title: `Rent a car`,
-    price: getRandomNumber(50, 150)
+    price: getRandomNumber(50, 150),
+    isChecked: getRandomBoolean()
   }
 ];
 
@@ -128,18 +135,14 @@ const getEnd = (date) => {
   return date;
 };
 
-const routePointsValues = Object.keys(routePoints);
-
 const generatePoints = () => {
-  const randomType = getRandomItem(routePointsValues);
-  const point = getRandomItem(routePoints[randomType]);
   const startDate = getStart();
+  const typeEvent = getRandomItem(typeEvents);
 
   return {
-    typeRoutePoints: randomType,
-    routePoint: point,
+    type: typeEvent,
     destination: getRandomItem(cities),
-    icon: point.toLowerCase(),
+    icon: typeEvent.toLowerCase(),
     eventPrice: getRandomNumber(30, 140),
     offer: renderServicesData(getRandomNumber(0, 5)),
     start: new Date(startDate),
@@ -149,15 +152,15 @@ const generatePoints = () => {
   };
 };
 
-const renderPointsData = (countPoint) => {
+const makePointsData = (countPoint) => {
   return new Array(countPoint)
     .fill()
     .map(generatePoints)
     .sort((a, b) => a.start - b.start);
 };
 
-const mockData = renderPointsData(QUANTITY_PINS);
+const mockData = makePointsData(QUANTITY_PINS);
 
-let datesList = Array.from(new Set(mockData.map((elem) => new Date(elem.start).toDateString())));
+const datesList = [...new Set(mockData.map((elem) => new Date(elem.start).toDateString()))];
 
-export {mockData, datesList};
+export {mockData, datesList, LabelOfType};

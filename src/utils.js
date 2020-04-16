@@ -1,5 +1,3 @@
-import {months} from "./consts";
-
 const getRandomNumber = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -11,53 +9,36 @@ const getRandomItem = (arr) => {
   return arr[getRandomNumber(0, arr.length - 1)];
 };
 
-const getFormatMonthDate = (date) => {
-  const monthIndex = date.getMonth();
-  const month = months[monthIndex];
-
-  return month;
+const getRandomBoolean = () => {
+  return Math.random() > 0.5;
 };
 
-const castTimeFormat = (value) => {
-  value = String(value);
+const getTotalPrice = (data) => {
+  data = data.slice(1);
 
-  let result;
+  let sumPrice = data.map((it) => it.eventPrice).reduce((prev, curr) => prev + curr);
 
-  if (value.length === 4) {
-    result = `${value.slice(2)}`;
-  } else if (value < 10) {
-    result = `0${value}`;
-  } else {
-    result = String(value);
-  }
+  data.forEach((el) => {
+    const arr = el.offer.map((item) => item.price);
+    if (arr.length) {
+      sumPrice += arr.reduce((prev, curr) => prev + curr);
+    }
+  });
 
-  return result;
+  return sumPrice;
 };
 
-const castTimeFormatForEdit = (date) => {
-  const year = castTimeFormat(date.getFullYear());
-  const month = castTimeFormat(date.getMonth() + 1);
-  const day = castTimeFormat(date.getDate());
-  const hour = castTimeFormat(date.getHours());
-  const minutes = castTimeFormat(date.getMinutes());
+const getRodLine = (data) => {
+  data = data.slice(1);
+  const destination = new Set(data.map((it) => it.destination));
 
-  return `${year}/${month}/${day} ${hour}:${minutes}`;
+  return [...destination].join(` &mdash; `);
 };
 
-const getDurationTime = (start, end) => {
-  const diff = end.getTime() - start.getTime();
-
-  let hours;
-  let minutes;
-
-  let minutesDiff = diff / 60 / 1000;
-  let hoursdDiff = diff / 3600 / 1000;
-
-  hours = Math.floor(hoursdDiff);
-  minutes = minutesDiff - 60 * hours;
-
-  return `${hours > 0 ? `${hours}H` : ``} ${minutes}M`;
+export {
+  getRandomNumber,
+  getRandomItem,
+  getTotalPrice,
+  getRodLine,
+  getRandomBoolean
 };
-
-
-export {getRandomNumber, getRandomItem, getFormatMonthDate, castTimeFormat, castTimeFormatForEdit, getDurationTime};
