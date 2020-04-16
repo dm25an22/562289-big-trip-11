@@ -12,7 +12,7 @@ export const renderOffers = (offers) => {
 };
 
 export const createEventPointTemplate = (dataPoint) => {
-  const {type, destination, eventPrice, offer, icon, start, end} = dataPoint;
+  const {type, destination, eventPrice, offer, start, end} = dataPoint;
 
   const renderOfferMurkup = renderOffers(offer);
   const [satrHours, starMinute, endHours, endMinute] = getStartEndEvent(start, end);
@@ -23,7 +23,7 @@ export const createEventPointTemplate = (dataPoint) => {
     `<li class="trip-events__item">
       <div class="event">
         <div class="event__type">
-          <img class="event__type-icon" width="42" height="42" src="img/icons/${icon}.png" alt="Event type icon">
+          <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
         </div>
         <h3 class="event__title">${type} ${LabelOfType[type]} ${destination}</h3>
 

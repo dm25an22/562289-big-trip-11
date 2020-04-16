@@ -137,12 +137,10 @@ const getEnd = (date) => {
 
 const generatePoints = () => {
   const startDate = getStart();
-  const typeEvent = getRandomItem(typeEvents);
 
   return {
-    type: typeEvent,
+    type: getRandomItem(typeEvents),
     destination: getRandomItem(cities),
-    icon: typeEvent.toLowerCase(),
     eventPrice: getRandomNumber(30, 140),
     offer: renderServicesData(getRandomNumber(0, 5)),
     start: new Date(startDate),
