@@ -1,51 +1,74 @@
-import {createInfoDestinationTemplate} from './components/info-destination';
-import {createInfoCostTemplate} from './components/info-cost';
-import {createNavTemplate} from './components/navigation';
-import {createFilterTemplate} from './components/filter';
-import {createSortTemplate} from './components/sort';
-import {createEventEditTemplate} from './components/eventEdit';
-import {createDayCounterTemplate} from './components/day-counter';
-import {createDayTemplate} from './components/day';
-import {createEventPointTemplate} from './components/event-point';
+import DayCounterComponent from "./components/day-counter";
+import DayComponent from "./components/day";
+import EventPointComponent from "./components/event-point";
+import EventEditComponent from "./components/eventEdit";
+import FilterComponent from "./components/filter";
+import InfoCostComponent from "./components/info-cost";
+import InfoDestinationComponent from "./components/info-destination";
+import NavigationComponent from "./components/navigation";
+import SortComponent from "./components/sort";
+
 import {mockData, datesList} from "./mock/points";
-import {getTotalPrice, getRodLine} from "./utils";
+import {getTotalPrice, getRodLine, render} from "./utils";
 import {getDurationTravel} from "./date-helpers";
+import {RenderPosition} from "./consts";
 
 const totalPrice = getTotalPrice(mockData);
 const roadLine = getRodLine(mockData);
 const durationTravel = getDurationTravel(datesList);
 
-const renderElementTemplate = (container, template, place = `beforeend`) => {
-  return container.insertAdjacentHTML(place, template);
-};
-
 const mainTrip = document.querySelector(`.trip-main`);
-renderElementTemplate(mainTrip, createInfoDestinationTemplate(roadLine, durationTravel), `afterbegin`);
+render(mainTrip, new InfoDestinationComponent(roadLine, durationTravel).getElement(), RenderPosition.AFTERBEGIN);
 
 const tripInfo = mainTrip.querySelector(`.trip-info`);
-renderElementTemplate(tripInfo, createInfoCostTemplate(totalPrice));
+render(tripInfo, new InfoCostComponent(totalPrice).getElement(), RenderPosition.BEFOREEND);
 
 const tripControls = mainTrip.querySelector(`.trip-controls`);
 const firstElement = tripControls.querySelector(`:first-child`);
-renderElementTemplate(firstElement, createNavTemplate(), `afterend`);
-renderElementTemplate(tripControls, createFilterTemplate());
+render(firstElement, new NavigationComponent().getElement(), RenderPosition.AFTER);
+render(tripControls, new FilterComponent().getElement(), RenderPosition.BEFOREEND);
 
 const tripEvents = document.querySelector(`.trip-events`);
-renderElementTemplate(tripEvents, createSortTemplate());
-renderElementTemplate(tripEvents, createEventEditTemplate(mockData[0]));
-
-renderElementTemplate(tripEvents, createDayCounterTemplate());
+render(tripEvents, new SortComponent().getElement(), RenderPosition.BEFOREEND);
+render(tripEvents, new DayCounterComponent().getElement(), RenderPosition.BEFOREEND);
 
 const dayContainer = tripEvents.querySelector(`.trip-days`);
 
+const renderPoint = (dayNumber, point) => {
+  const eventPoint = new EventPointComponent(point);
+  const eventPointEdit = new EventEditComponent(point);
 
-datesList.forEach((date, i) => {
-  renderElementTemplate(dayContainer, createDayTemplate(date, i + 1));
-  const days = tripEvents.querySelectorAll(`.trip-events__list`);
+  const eventRollupBtn = eventPoint.getElement().querySelector(`.event__rollup-btn`);
 
-  mockData
-  .slice(1)
+  const onEventRollupBtnClick = () => {
+    dayNumber.replaceChild(eventPointEdit.getElement(), eventPoint.getElement());
+  };
+
+  const onEventPointSubmit = () => {
+    dayNumber.replaceChild(eventPoint.getElement(), eventPointEdit.getElement());
+  };
+
+  eventRollupBtn.addEventListener((`click`), onEventRollupBtnClick);
+  eventPointEdit.getElement().addEventListener((`submit`), onEventPointSubmit);
+
+  render(dayNumber, eventPoint.getElement(), RenderPosition.BEFOREEND);
+};
+
+const renderDay = () => {
+
+  datesList.forEach((date, i) => {
+    render(dayContainer, new DayComponent(date, i + 1).getElement(), RenderPosition.BEFOREEND);
+    const days = tripEvents.querySelectorAll(`.trip-events__list`);
+
+    mockData
     .filter((el) => new Date(el.start).toDateString() === date)
-    .forEach((it) => renderElementTemplate(days[i], createEventPointTemplate(it)));
-});
+    .forEach((it) => {
+      renderPoint(days[i], it);
+
+    });
+  });
+
+};
+
+renderDay();
 

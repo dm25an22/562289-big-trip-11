@@ -1,5 +1,6 @@
 import {getDurationTime, getStartEndEvent} from "../date-helpers";
 import {LabelOfType} from "../mock/points";
+import {createElement} from "../utils";
 
 export const renderOffers = (offers) => {
   return offers.slice(0, 3).filter((el) => el.isChecked).map((it) => {
@@ -11,7 +12,7 @@ export const renderOffers = (offers) => {
   }).join(`\n`);
 };
 
-export const createEventPointTemplate = (dataPoint) => {
+const createEventPointTemplate = (dataPoint) => {
   const {type, destination, eventPrice, offer, start, end} = dataPoint;
 
   const renderOfferMurkup = renderOffers(offer);
@@ -51,3 +52,25 @@ export const createEventPointTemplate = (dataPoint) => {
   </li>`
   );
 };
+
+export default class EventPoint {
+  constructor(data) {
+    this._data = data;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventPointTemplate(this._data);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

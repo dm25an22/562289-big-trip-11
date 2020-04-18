@@ -1,5 +1,6 @@
 import {castTimeFormatForEdit} from "../date-helpers";
 import {LabelOfType} from "../mock/points";
+import {createElement} from "../utils";
 
 const renderTypeIcon = (routePoint) => {
   return (
@@ -89,7 +90,7 @@ const renderImgMurkup = (photos) => {
   }).join(`\n`);
 };
 
-export const createEventEditTemplate = (dataPoint) => {
+const createEventEditTemplate = (dataPoint) => {
   const {routePoint, destination, type, eventPrice, offer, description, photos, start, end} = dataPoint;
 
   const imgMurkup = renderImgMurkup(photos);
@@ -174,3 +175,25 @@ export const createEventEditTemplate = (dataPoint) => {
     </form>`
   );
 };
+
+export default class EventEdit {
+  constructor(data) {
+    this._data = data;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventEditTemplate(this._data);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
