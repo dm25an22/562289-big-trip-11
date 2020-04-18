@@ -1,7 +1,8 @@
 
 import {getMonth, getDay} from "../date-helpers";
+import {createElement} from "../utils";
 
-export const createDayTemplate = (date, index) => {
+const createDayTemplate = (date, index) => {
 
   const mounth = getMonth(date);
   const day = getDay(date);
@@ -18,3 +19,26 @@ export const createDayTemplate = (date, index) => {
     </li>`
   );
 };
+
+export default class Day {
+  constructor(date, index) {
+    this._date = date;
+    this._index = index;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createDayTemplate(this._date, this._index);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

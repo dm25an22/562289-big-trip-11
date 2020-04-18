@@ -1,4 +1,6 @@
-export const createInfoDestinationTemplate = (roadLine, durationTravel) => {
+import {createElement} from "../utils";
+
+const createInfoDestinationTemplate = (roadLine, durationTravel) => {
   const [startDay, startMonth, endtDay, endMonth] = durationTravel;
 
   return (
@@ -11,3 +13,27 @@ export const createInfoDestinationTemplate = (roadLine, durationTravel) => {
     </section>`
   );
 };
+
+
+export default class InfoDestination {
+  constructor(roadLine, durationTravel) {
+    this._roadLine = roadLine;
+    this._durationTravel = durationTravel;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createInfoDestinationTemplate(this._roadLine, this._durationTravel);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
