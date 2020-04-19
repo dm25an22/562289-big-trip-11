@@ -1,21 +1,18 @@
 import {createElement} from "../utils";
 
-const createInfoCostTemplate = (cost) => {
+const createNoTasksTemplate = () => {
   return (
-    `<p class="trip-info__cost">
-       Total: &euro;&nbsp;<span class="trip-info__cost-value">${cost}</span>
-    </p>`
+    `<p class="trip-events__msg">Click New Event to create your first point</p>`
   );
 };
 
-export default class InfoCost {
-  constructor(cost) {
-    this._cost = cost;
+export default class NoTasks {
+  constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createInfoCostTemplate(this._cost);
+    return createNoTasksTemplate();
   }
 
   getElement() {
