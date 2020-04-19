@@ -2,7 +2,7 @@ import {getRandomNumber, getRandomItem, getRandomBoolean} from "../utils";
 import {castTimeFormat} from "../date-helpers";
 import {LABEL_IN, LABEL_TO} from "../consts";
 
-const QUANTITY_PINS = 16;
+const QUANTITY_PINS = 15;
 
 const LabelOfType = {
   'Taxi': LABEL_TO,

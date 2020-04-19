@@ -16,9 +16,11 @@ const getRandomBoolean = () => {
 };
 
 const getTotalPrice = (data) => {
-  data = data.slice(1);
+  let sumPrice = 0;
 
-  let sumPrice = data.map((it) => it.eventPrice).reduce((prev, curr) => prev + curr);
+  if (data.length) {
+    sumPrice = data.map((it) => it.eventPrice).reduce((prev, curr) => prev + curr);
+  }
 
   data.forEach((el) => {
     const arr = el.offer.map((item) => item.price);
@@ -31,7 +33,6 @@ const getTotalPrice = (data) => {
 };
 
 const getRodLine = (data) => {
-  data = data.slice(1);
   const destination = new Set(data.map((it) => it.destination));
 
   return [...destination].join(` &mdash; `);

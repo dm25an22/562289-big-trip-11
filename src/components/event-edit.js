@@ -2,44 +2,44 @@ import {castTimeFormatForEdit} from "../date-helpers";
 import {LabelOfType} from "../mock/points";
 import {createElement} from "../utils";
 
-const renderTypeIcon = (routePoint) => {
+const renderTypeIcon = (type) => {
   return (
     `<div class="event__type-list">
     <fieldset class="event__type-group">
       <legend class="visually-hidden">Transfer</legend>
 
       <div class="event__type-item">
-        <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi" ${routePoint === `Taxi` ? `checked` : ``}>
+        <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi" ${type === `Taxi` ? `checked` : ``}>
         <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
       </div>
 
       <div class="event__type-item">
-        <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus" ${routePoint === `Bus` ? `checked` : ``}>
+        <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus" ${type === `Bus` ? `checked` : ``}>
         <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
       </div>
 
       <div class="event__type-item">
-        <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train" ${routePoint === `Train` ? `checked` : ``}>
+        <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train" ${type === `Train` ? `checked` : ``}>
         <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
       </div>
 
       <div class="event__type-item">
-        <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship" ${routePoint === `Ship` ? `checked` : ``}>
+        <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship" ${type === `Ship` ? `checked` : ``}>
         <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
       </div>
 
       <div class="event__type-item">
-        <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport" ${routePoint === `Transport` ? `checked` : ``}>
+        <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport" ${type === `Transport` ? `checked` : ``}>
         <label class="event__type-label  event__type-label--transport" for="event-type-transport-1">Transport</label>
       </div>
 
       <div class="event__type-item">
-        <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive" ${routePoint === `Drive` ? `checked` : ``}>
+        <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive" ${type === `Drive` ? `checked` : ``}>
         <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
       </div>
 
       <div class="event__type-item">
-        <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" ${routePoint === `Flight` ? `checked` : ``}>
+        <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" ${type === `Flight` ? `checked` : ``}>
         <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
       </div>
     </fieldset>
@@ -48,17 +48,17 @@ const renderTypeIcon = (routePoint) => {
       <legend class="visually-hidden">Activity</legend>
 
       <div class="event__type-item">
-        <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in"  ${routePoint === `Check-in` ? `checked` : ``}>
+        <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in"  ${type === `Check-in` ? `checked` : ``}>
         <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
       </div>
 
       <div class="event__type-item">
-        <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing"  ${routePoint === `Sightseeing` ? `checked` : ``}>
+        <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing"  ${type === `Sightseeing` ? `checked` : ``}>
         <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
       </div>
 
       <div class="event__type-item">
-        <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant"  ${routePoint === `Restaurant` ? `checked` : ``}>
+        <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant"  ${type === `Restaurant` ? `checked` : ``}>
         <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
       </div>
     </fieldset>
@@ -91,11 +91,11 @@ const renderImgMurkup = (photos) => {
 };
 
 const createEventEditTemplate = (dataPoint) => {
-  const {routePoint, destination, type, eventPrice, offer, description, photos, start, end} = dataPoint;
+  const {destination, type, eventPrice, offer, description, photos, start, end} = dataPoint;
 
   const imgMurkup = renderImgMurkup(photos);
   const offerMurkup = renderOffersMurkup(offer);
-  const typeIcon = renderTypeIcon(routePoint);
+  const typeIcon = renderTypeIcon(type);
 
   const startData = castTimeFormatForEdit(start);
   const endData = castTimeFormatForEdit(end);
