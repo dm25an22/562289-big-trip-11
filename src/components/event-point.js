@@ -1,6 +1,6 @@
 import {getDurationTime, getStartEndEvent} from "../date-helpers";
 import {LabelOfType} from "../mock/points";
-import {createElement} from "../utils";
+import AbstractComponent from "./abstract-component";
 
 export const renderOffers = (offers) => {
   return offers.slice(0, 3).filter((el) => el.isChecked).map((it) => {
@@ -53,24 +53,19 @@ const createEventPointTemplate = (dataPoint) => {
   );
 };
 
-export default class EventPoint {
+export default class EventPoint extends AbstractComponent {
   constructor(data) {
+    super();
+
     this._data = data;
-    this._element = null;
   }
 
   getTemplate() {
     return createEventPointTemplate(this._data);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
+  setClickHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
   }
 
-  removeElement() {
-    this._element = null;
-  }
 }

@@ -1,6 +1,6 @@
 import {castTimeFormatForEdit} from "../date-helpers";
 import {LabelOfType} from "../mock/points";
-import {createElement} from "../utils";
+import AbstractComponent from "./abstract-component";
 
 const renderTypeIcon = (type) => {
   return (
@@ -176,24 +176,19 @@ const createEventEditTemplate = (dataPoint) => {
   );
 };
 
-export default class EventEdit {
+export default class EventEdit extends AbstractComponent {
   constructor(data) {
+    super();
+
     this._data = data;
-    this._element = null;
   }
 
   getTemplate() {
     return createEventEditTemplate(this._data);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
+  setSubmitHandler(handler) {
+    this.getElement().addEventListener(`submit`, handler);
   }
 
-  removeElement() {
-    this._element = null;
-  }
 }

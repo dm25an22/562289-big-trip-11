@@ -1,4 +1,4 @@
-import {getRandomNumber, getRandomItem, getRandomBoolean} from "../utils";
+import {getRandomNumber, getRandomItem, getRandomBoolean} from "../utils/common";
 import {castTimeFormat} from "../date-helpers";
 import {LABEL_IN, LABEL_TO} from "../consts";
 

@@ -1,4 +1,4 @@
-import {createElement} from "../utils";
+import AbstractComponent from "./abstract-component";
 
 const createDayCounterTemplate = () => {
   return (
@@ -7,23 +7,8 @@ const createDayCounterTemplate = () => {
   );
 };
 
-export default class DayCounter {
-  constructor() {
-    this._element = null;
-  }
-
+export default class DayCounter extends AbstractComponent {
   getTemplate() {
     return createDayCounterTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

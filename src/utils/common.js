@@ -1,5 +1,3 @@
-import {RenderPosition} from "./consts";
-
 const getRandomNumber = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -38,36 +36,10 @@ const getRodLine = (data) => {
   return [...destination].join(` &mdash; `);
 };
 
-const createElement = (template) => {
-  const newElement = document.createElement(`div`);
-  newElement.innerHTML = template;
-
-  return newElement.firstChild;
-};
-
-const render = (container, element, place = `beforeend`) => {
-
-  switch (place) {
-    case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
-      break;
-
-    case RenderPosition.BEFOREEND:
-      container.append(element);
-      break;
-
-    case RenderPosition.AFTER:
-      container.after(element);
-      break;
-  }
-};
-
 export {
   getRandomNumber,
   getRandomItem,
   getTotalPrice,
   getRodLine,
   getRandomBoolean,
-  createElement,
-  render
 };

@@ -1,4 +1,4 @@
-import {createElement} from "../utils";
+import AbstractComponent from "./abstract-component";
 
 const createInfoDestinationTemplate = (roadLine, durationTravel) => {
   const [startDay, startMonth, endtDay, endMonth] = durationTravel;
@@ -13,25 +13,16 @@ const createInfoDestinationTemplate = (roadLine, durationTravel) => {
 };
 
 
-export default class InfoDestination {
+export default class InfoDestination extends AbstractComponent {
   constructor(roadLine, durationTravel) {
+    super();
+
     this._roadLine = roadLine;
     this._durationTravel = durationTravel;
-    this._element = null;
   }
 
   getTemplate() {
     return createInfoDestinationTemplate(this._roadLine, this._durationTravel);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
 }
