@@ -45,7 +45,7 @@ const renderPoint = (dayNumber, point) => {
   render(dayNumber, eventPoint, RenderPosition.BEFOREEND);
 };
 
-export default class DayBoardController {
+export default class TripController {
   constructor(tripEventsContainer, tripInfoContainer, dayContainer) {
 
     this._tripEvents = tripEventsContainer;

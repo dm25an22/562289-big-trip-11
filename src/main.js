@@ -4,7 +4,7 @@ import FilterComponent from "./components/filter";
 import InfoCostComponent from "./components/info-cost";
 import NavigationComponent from "./components/navigation";
 
-import DayBoardController from "./controllers/day-board";
+import TripController from "./controllers/day-board";
 
 import {mockData} from "./mock/points";
 import {getTotalPrice} from "./utils/common";
@@ -29,7 +29,7 @@ const dayCounterComponent = new DayCounterComponent();
 
 render(tripEvents, dayCounterComponent, RenderPosition.BEFOREEND);
 
-const dayBoardController = new DayBoardController(tripEvents, tripInfoComponent, dayCounterComponent);
-dayBoardController.render(mockData);
+const tripController = new TripController(tripEvents, tripInfoComponent, dayCounterComponent);
+tripController.render(mockData);
 
 
