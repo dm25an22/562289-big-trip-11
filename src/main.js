@@ -5,7 +5,6 @@ import InfoCostComponent from "./components/info-cost";
 import NavigationComponent from "./components/navigation";
 
 import TripController from "./controllers/trip-controller";
-console.log(mockData);
 
 import {mockData} from "./mock/points";
 import {getTotalPrice} from "./utils/common";
