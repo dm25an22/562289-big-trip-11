@@ -21,7 +21,9 @@ const getTotalPrice = (data) => {
   }
 
   data.forEach((el) => {
-    const arr = el.offer.map((item) => item.price);
+    const arr = el.offer
+    .filter((element) => element.isChecked)
+    .map((item) => item.price);
     if (arr.length) {
       sumPrice += arr.reduce((prev, curr) => prev + curr);
     }
