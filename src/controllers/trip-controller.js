@@ -10,39 +10,43 @@ import {getDurationTravel} from "../date-helpers";
 import {getRodLine} from "../utils/common";
 import {RenderPosition, render, replace} from "../utils/render";
 
-const renderPoint = (dayNumber, point) => {
-  const eventPoint = new EventPointComponent(point);
-  const eventPointEdit = new EventEditComponent(point);
+const renderPoints = (points, day, date) => {
 
+  points.filter((el) => new Date(el.start).toDateString() === date)
+      .forEach((point) => {
 
-  const replacePointToEdit = () => {
-    replace(eventPointEdit, eventPoint);
-  };
+        const eventPoint = new EventPointComponent(point);
+        const eventPointEdit = new EventEditComponent(point);
 
-  const replaceEditToPoint = () => {
-    replace(eventPoint, eventPointEdit);
-  };
+        const replacePointToEdit = () => {
+          replace(eventPointEdit, eventPoint);
+        };
 
-  const onEscPress = (evt) => {
-    const isEsc = evt.key === `Escape` || evt.key === `Esc`;
+        const replaceEditToPoint = () => {
+          replace(eventPoint, eventPointEdit);
+        };
 
-    if (isEsc) {
-      replaceEditToPoint();
-      document.removeEventListener(`keydown`, onEscPress);
-    }
-  };
+        const onEscPress = (evt) => {
+          const isEsc = evt.key === `Escape` || evt.key === `Esc`;
 
-  eventPoint.setClickHandler(() => {
-    replacePointToEdit();
-    document.addEventListener(`keydown`, onEscPress);
-  });
+          if (isEsc) {
+            replaceEditToPoint();
+            document.removeEventListener(`keydown`, onEscPress);
+          }
+        };
 
-  eventPointEdit.setSubmitHandler((evt) => {
-    evt.preventDefault();
-    replaceEditToPoint();
-  });
+        eventPoint.setClickHandler(() => {
+          replacePointToEdit();
+          document.addEventListener(`keydown`, onEscPress);
+        });
 
-  render(dayNumber, eventPoint, RenderPosition.BEFOREEND);
+        eventPointEdit.setSubmitHandler((evt) => {
+          evt.preventDefault();
+          replaceEditToPoint();
+        });
+
+        render(day, eventPoint, RenderPosition.BEFOREEND);
+      });
 };
 
 export default class TripController {
@@ -73,12 +77,7 @@ export default class TripController {
       render(this._dayContainer.getElement(), dayComponent, RenderPosition.BEFOREEND);
       const day = dayComponent.getElement().querySelector(`.trip-events__list`);
 
-      points
-      .filter((el) => new Date(el.start).toDateString() === date)
-      .forEach((it) => {
-        renderPoint(day, it);
-
-      });
+      renderPoints(points, day, date);
 
     });
   }

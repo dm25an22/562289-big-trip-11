@@ -4,7 +4,7 @@ import FilterComponent from "./components/filter";
 import InfoCostComponent from "./components/info-cost";
 import NavigationComponent from "./components/navigation";
 
-import TripController from "./controllers/day-board";
+import TripController from "./controllers/trip-controller";
 
 import {mockData} from "./mock/points";
 import {getTotalPrice} from "./utils/common";
