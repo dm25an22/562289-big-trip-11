@@ -1,5 +1,3 @@
-import {RenderPosition} from "./consts";
-
 const getRandomNumber = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -23,7 +21,9 @@ const getTotalPrice = (data) => {
   }
 
   data.forEach((el) => {
-    const arr = el.offer.map((item) => item.price);
+    const arr = el.offer
+    .filter((element) => element.isChecked)
+    .map((item) => item.price);
     if (arr.length) {
       sumPrice += arr.reduce((prev, curr) => prev + curr);
     }
@@ -38,36 +38,10 @@ const getRodLine = (data) => {
   return [...destination].join(` &mdash; `);
 };
 
-const createElement = (template) => {
-  const newElement = document.createElement(`div`);
-  newElement.innerHTML = template;
-
-  return newElement.firstChild;
-};
-
-const render = (container, element, place = `beforeend`) => {
-
-  switch (place) {
-    case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
-      break;
-
-    case RenderPosition.BEFOREEND:
-      container.append(element);
-      break;
-
-    case RenderPosition.AFTER:
-      container.after(element);
-      break;
-  }
-};
-
 export {
   getRandomNumber,
   getRandomItem,
   getTotalPrice,
   getRodLine,
   getRandomBoolean,
-  createElement,
-  render
 };

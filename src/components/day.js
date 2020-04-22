@@ -1,6 +1,6 @@
 
 import {getMonth, getDay} from "../date-helpers";
-import {createElement} from "../utils";
+import AbstractComponent from "./abstract-component";
 
 const createDayTemplate = (date, index) => {
 
@@ -20,25 +20,16 @@ const createDayTemplate = (date, index) => {
   );
 };
 
-export default class Day {
+export default class Day extends AbstractComponent {
   constructor(date, index) {
+    super();
+
     this._date = date;
     this._index = index;
-    this._element = null;
   }
 
   getTemplate() {
     return createDayTemplate(this._date, this._index);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
 }
