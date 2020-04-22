@@ -4,15 +4,29 @@ import InfoDestinationComponent from "../components/info-destination";
 import DayComponent from "../components/day";
 import EventPointComponent from "../components/event-point";
 import EventEditComponent from "../components/event-edit";
+import InfoCostComponent from "../components/info-cost";
 
-import {datesList} from "../mock/points";
 import {getDurationTravel} from "../date-helpers";
-import {getRodLine} from "../utils/common";
+import {getRodLine, getTotalPrice} from "../utils/common";
 import {RenderPosition, render, replace} from "../utils/render";
 
-const renderPoints = (points, day, date) => {
+const renderPoints = (points, dayContainer, tripInfoContainer) => {
 
-  points.filter((el) => new Date(el.start).toDateString() === date)
+  const datesList = [...new Set(points.map((elem) => new Date(elem.start).toDateString()))];
+
+  const roadLine = getRodLine(points);
+  const durationTravel = getDurationTravel(datesList);
+  const totalPrice = getTotalPrice(points);
+
+  render(tripInfoContainer, new InfoCostComponent(totalPrice), RenderPosition.BEFOREEND);
+  render(tripInfoContainer, new InfoDestinationComponent(roadLine, durationTravel), RenderPosition.AFTERBEGIN);
+
+  datesList.forEach((date, i) => {
+    const dayComponent = new DayComponent(date, i + 1);
+    render(dayContainer, dayComponent, RenderPosition.BEFOREEND);
+    const day = dayComponent.getElement().querySelector(`.trip-events__list`);
+
+    points.filter((el) => new Date(el.start).toDateString() === date)
       .forEach((point) => {
 
         const eventPoint = new EventPointComponent(point);
@@ -45,8 +59,14 @@ const renderPoints = (points, day, date) => {
           replaceEditToPoint();
         });
 
+        eventPointEdit.setClickHandler(() => {
+          replaceEditToPoint();
+        });
+
         render(day, eventPoint, RenderPosition.BEFOREEND);
       });
+
+  });
 };
 
 export default class TripController {
@@ -61,25 +81,19 @@ export default class TripController {
   }
 
   render(points) {
+    const tripInfoContainer = this._tripInfoContainer.getElement();
+    const dayContainer = this._dayContainer.getElement();
+    const tripEvents = this._tripEvents;
+
     if (!points.length) {
-      render(this._tripEvents, this._noPointsComponent, RenderPosition.BEFOREEND);
+      render(tripEvents, this._noPointsComponent, RenderPosition.BEFOREEND);
+      render(tripInfoContainer, new InfoCostComponent(), RenderPosition.BEFOREEND);
       return;
     }
 
-    const roadLine = getRodLine(points);
-    const durationTravel = getDurationTravel(datesList);
+    render(tripEvents, this._sortComponent, RenderPosition.AFTERBEGIN);
 
-    render(this._tripInfoContainer.getElement(), new InfoDestinationComponent(roadLine, durationTravel), RenderPosition.AFTERBEGIN);
-    render(this._tripEvents, this._sortComponent, RenderPosition.AFTERBEGIN);
-
-    datesList.forEach((date, i) => {
-      const dayComponent = new DayComponent(date, i + 1);
-      render(this._dayContainer.getElement(), dayComponent, RenderPosition.BEFOREEND);
-      const day = dayComponent.getElement().querySelector(`.trip-events__list`);
-
-      renderPoints(points, day, date);
-
-    });
+    renderPoints(points, dayContainer, tripInfoContainer);
   }
 
 }

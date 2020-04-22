@@ -159,6 +159,4 @@ const makePointsData = (countPoint) => {
 
 const mockData = makePointsData(QUANTITY_PINS);
 
-const datesList = [...new Set(mockData.map((elem) => new Date(elem.start).toDateString()))];
-
-export {mockData, datesList, LabelOfType};
+export {mockData, LabelOfType};
