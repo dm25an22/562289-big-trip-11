@@ -5,7 +5,6 @@ import DayComponent from "../components/day";
 import EventPointComponent from "../components/event-point";
 import EventEditComponent from "../components/event-edit";
 import InfoCostComponent from "../components/info-cost";
-import SortListComponent from "../components/list-sort";
 
 import {getDurationTravel} from "../date-helpers";
 import {getRodLine, getTotalPrice, getSortedPoints} from "../utils/common";
@@ -54,7 +53,23 @@ const renderPoint = (container, points) => {
   });
 };
 
-const renderPointsWithDay = (points, dayContainer, tripInfoContainer) => {
+const renderEvents = (tripInfoContainer, dayContainer, points, isSort = false) => {
+
+  if (isSort) {
+    const dayComponent = new DayComponent();
+    render(dayContainer, dayComponent, RenderPosition.BEFOREEND);
+
+    const day = dayComponent.getElement().querySelector(`.trip-events__list`);
+    const tripSortItemDay = document.querySelector(`.trip-sort__item--day`);
+
+
+    const dayInfo = dayContainer.querySelector(`.day__info`);
+    dayInfo.innerHTML = ``;
+    tripSortItemDay.textContent = ``;
+
+    renderPoint(day, points);
+    return;
+  }
 
   const datesList = [...new Set(points.map((elem) => new Date(elem.start).toDateString()))];
 
@@ -75,6 +90,7 @@ const renderPointsWithDay = (points, dayContainer, tripInfoContainer) => {
     renderPoint(day, pointsFilter);
 
   });
+
 };
 
 export default class TripController {
@@ -110,24 +126,18 @@ export default class TripController {
       dayContainer.innerHTML = ``;
 
       if (typeSort === SortType.EVENT) {
-        tripInfoContainer.innerHTML = ``;
         tripSortItemDay.textContent = `Day`;
+        tripInfoContainer.innerHTML = ``;
 
-        renderPointsWithDay(points, dayContainer, tripInfoContainer);
+        renderEvents(tripInfoContainer, dayContainer, sortedPoints);
         return;
       }
 
-      tripSortItemDay.textContent = ``;
-
-      const sortListComponent = new SortListComponent();
-      render(dayContainer, sortListComponent, RenderPosition.BEFOREEND);
-
-      const tripEventsList = dayContainer.querySelector(`.trip-events__list`);
-      renderPoint(tripEventsList, sortedPoints);
+      renderEvents(tripInfoContainer, dayContainer, sortedPoints, true);
 
     });
 
-    renderPointsWithDay(points, dayContainer, tripInfoContainer);
+    renderEvents(tripInfoContainer, dayContainer, points);
 
   }
 
