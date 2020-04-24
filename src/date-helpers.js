@@ -57,6 +57,21 @@ const getDurationTime = (start, end) => {
   return `${hours > 0 ? `${hours}H` : ``} ${minutes}M`;
 };
 
+const getDurationTimeInMinutes = (start, end) => {
+  const diff = end.getTime() - start.getTime();
+
+  let hours;
+  let minutes;
+
+  let minutesDiff = diff / 60 / 1000;
+  let hoursdDiff = diff / 3600 / 1000;
+
+  hours = Math.floor(hoursdDiff);
+  minutes = minutesDiff - 60 * hours;
+
+  return hours * 60 + minutes;
+};
+
 const getFormatMonthDate = (date) => {
   const monthIndex = date.getMonth();
   const month = MONTHS[monthIndex];
@@ -88,5 +103,6 @@ export {
   getDurationTime,
   getFormatMonthDate,
   getDay,
-  castTimeFormat
+  castTimeFormat,
+  getDurationTimeInMinutes
 };

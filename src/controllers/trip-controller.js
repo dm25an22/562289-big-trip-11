@@ -1,4 +1,4 @@
-import SortComponent from "../components/sort";
+import SortComponent, {SortType} from "../components/sort";
 import NoPointsComponent from "../components/no-points";
 import InfoDestinationComponent from "../components/info-destination";
 import DayComponent from "../components/day";
@@ -7,10 +7,69 @@ import EventEditComponent from "../components/event-edit";
 import InfoCostComponent from "../components/info-cost";
 
 import {getDurationTravel} from "../date-helpers";
-import {getRodLine, getTotalPrice} from "../utils/common";
+import {getRodLine, getTotalPrice, getSortedPoints} from "../utils/common";
 import {RenderPosition, render, replace} from "../utils/render";
 
-const renderPoints = (points, dayContainer, tripInfoContainer) => {
+
+const renderPoint = (container, points) => {
+
+  points.forEach((point) => {
+
+    const eventPoint = new EventPointComponent(point);
+    const eventPointEdit = new EventEditComponent(point);
+
+    const replacePointToEdit = () => {
+      replace(eventPointEdit, eventPoint);
+    };
+
+    const replaceEditToPoint = () => {
+      replace(eventPoint, eventPointEdit);
+    };
+
+    const onEscPress = (evt) => {
+      const isEsc = evt.key === `Escape` || evt.key === `Esc`;
+
+      if (isEsc) {
+        replaceEditToPoint();
+        document.removeEventListener(`keydown`, onEscPress);
+      }
+    };
+
+    eventPoint.setClickHandler(() => {
+      replacePointToEdit();
+      document.addEventListener(`keydown`, onEscPress);
+    });
+
+    eventPointEdit.setSubmitHandler((evt) => {
+      evt.preventDefault();
+      replaceEditToPoint();
+    });
+
+    eventPointEdit.setClickHandler(() => {
+      replaceEditToPoint();
+    });
+
+    render(container, eventPoint, RenderPosition.BEFOREEND);
+  });
+};
+
+const renderEvents = (tripInfoContainer, dayContainer, points, isSort = false) => {
+
+  if (isSort) {
+    const dayComponent = new DayComponent();
+    render(dayContainer, dayComponent, RenderPosition.BEFOREEND);
+
+    const day = dayComponent.getElement().querySelector(`.trip-events__list`);
+    const tripSortItemDay = document.querySelector(`.trip-sort__item--day`);
+
+
+    const dayInfo = dayContainer.querySelector(`.day__info`);
+    dayInfo.innerHTML = ``;
+    tripSortItemDay.textContent = ``;
+
+    renderPoint(day, points);
+    return;
+  }
 
   const datesList = [...new Set(points.map((elem) => new Date(elem.start).toDateString()))];
 
@@ -26,47 +85,12 @@ const renderPoints = (points, dayContainer, tripInfoContainer) => {
     render(dayContainer, dayComponent, RenderPosition.BEFOREEND);
     const day = dayComponent.getElement().querySelector(`.trip-events__list`);
 
-    points.filter((el) => new Date(el.start).toDateString() === date)
-      .forEach((point) => {
+    const pointsFilter = points.filter((el) => new Date(el.start).toDateString() === date);
 
-        const eventPoint = new EventPointComponent(point);
-        const eventPointEdit = new EventEditComponent(point);
-
-        const replacePointToEdit = () => {
-          replace(eventPointEdit, eventPoint);
-        };
-
-        const replaceEditToPoint = () => {
-          replace(eventPoint, eventPointEdit);
-        };
-
-        const onEscPress = (evt) => {
-          const isEsc = evt.key === `Escape` || evt.key === `Esc`;
-
-          if (isEsc) {
-            replaceEditToPoint();
-            document.removeEventListener(`keydown`, onEscPress);
-          }
-        };
-
-        eventPoint.setClickHandler(() => {
-          replacePointToEdit();
-          document.addEventListener(`keydown`, onEscPress);
-        });
-
-        eventPointEdit.setSubmitHandler((evt) => {
-          evt.preventDefault();
-          replaceEditToPoint();
-        });
-
-        eventPointEdit.setClickHandler(() => {
-          replaceEditToPoint();
-        });
-
-        render(day, eventPoint, RenderPosition.BEFOREEND);
-      });
+    renderPoint(day, pointsFilter);
 
   });
+
 };
 
 export default class TripController {
@@ -91,9 +115,30 @@ export default class TripController {
       return;
     }
 
-    render(tripEvents, this._sortComponent, RenderPosition.AFTERBEGIN);
+    const tripEventsFirstChild = tripEvents.querySelector(`:first-child`);
+    render(tripEventsFirstChild, this._sortComponent, RenderPosition.AFTER);
 
-    renderPoints(points, dayContainer, tripInfoContainer);
+    this._sortComponent.setSortTypeChangeHandler((typeSort) => {
+
+      const tripSortItemDay = tripEvents.querySelector(`.trip-sort__item--day`);
+      const sortedPoints = getSortedPoints(typeSort, points);
+
+      dayContainer.innerHTML = ``;
+
+      if (typeSort === SortType.EVENT) {
+        tripSortItemDay.textContent = `Day`;
+        tripInfoContainer.innerHTML = ``;
+
+        renderEvents(tripInfoContainer, dayContainer, sortedPoints);
+        return;
+      }
+
+      renderEvents(tripInfoContainer, dayContainer, sortedPoints, true);
+
+    });
+
+    renderEvents(tripInfoContainer, dayContainer, points);
+
   }
 
 }

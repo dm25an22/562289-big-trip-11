@@ -1,3 +1,6 @@
+import {getDurationTimeInMinutes} from "../date-helpers";
+import {SortType} from "../components/sort";
+
 const getRandomNumber = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -38,10 +41,37 @@ const getRodLine = (data) => {
   return [...destination].join(` &mdash; `);
 };
 
+const getSortedPoints = (sortType, points) => {
+  const copyPoints = [...points];
+  let sortedPoints = [];
+
+  switch (sortType) {
+
+    case SortType.EVENT:
+      sortedPoints = points;
+      break;
+
+    case SortType.TIME:
+      sortedPoints = copyPoints.sort((a, b) => {
+        a = getDurationTimeInMinutes(a.start, a.end);
+        b = getDurationTimeInMinutes(b.start, b.end);
+        return b - a;
+      });
+      break;
+
+    case SortType.PRICE:
+      sortedPoints = copyPoints.sort((a, b) => b.eventPrice - a.eventPrice);
+      break;
+  }
+
+  return sortedPoints;
+};
+
 export {
   getRandomNumber,
   getRandomItem,
   getTotalPrice,
   getRodLine,
   getRandomBoolean,
+  getSortedPoints
 };
