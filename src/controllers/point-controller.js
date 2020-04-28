@@ -3,15 +3,19 @@ import EventEditComponent from "../components/event-edit";
 import {RenderPosition, render, replace} from "../utils/render";
 
 export default class PointController {
-  constructor(container) {
+  constructor(container, onDataChange) {
     this._container = container;
     this._eventPoint = null;
     this._eventPointEdit = null;
+    this._onDataChange = onDataChange;
 
     this._onEscPress = this._onEscPress.bind(this);
   }
 
   render(point) {
+    const oldEventPoint = this._eventPoint;
+    const oldEventPointEdit = this._eventPointEdit;
+
     this._eventPoint = new EventPointComponent(point);
     this._eventPointEdit = new EventEditComponent(point);
 
@@ -28,7 +32,18 @@ export default class PointController {
       this._replaceEditToPoint();
     });
 
-    render(this._container, this._eventPoint, RenderPosition.BEFOREEND);
+    this._eventPointEdit.setClickOnStarHandler(() => {
+      this._onDataChange(this, point, Object.assign({}, point, {
+        isFavorite: !point.isFavorite
+      }));
+    });
+
+    if (oldEventPoint && oldEventPointEdit) {
+      replace(this._eventPoint, oldEventPoint);
+      replace(this._eventPointEdit, oldEventPointEdit);
+    } else {
+      render(this._container, this._eventPoint, RenderPosition.BEFOREEND);
+    }
   }
 
   _replacePointToEdit() {

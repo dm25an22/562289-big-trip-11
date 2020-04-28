@@ -91,7 +91,7 @@ export const renderImgMurkup = (photos) => {
 };
 
 const createNewEventEditTemplate = (dataPoint) => {
-  const {destination, type, eventPrice, offer, description, photos, start, end} = dataPoint;
+  const {destination, type, eventPrice, offer, description, photos, start, end, isFavorite} = dataPoint;
 
   const imgMurkup = renderImgMurkup(photos);
   const offerMurkup = renderOffersMurkup(offer);
@@ -150,7 +150,7 @@ const createNewEventEditTemplate = (dataPoint) => {
 
         <button class="event__reset-btn" type="reset">Delete</button>
 
-      <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" checked>
+      <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
       <label class="event__favorite-btn" for="event-favorite-1">
         <span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -207,6 +207,10 @@ export default class EventEdit extends AbstractComponent {
 
   setClickHandler(handler) {
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
+  }
+
+  setClickOnStarHandler(handler) {
+    this.getElement().querySelector(`.event__favorite-icon`).addEventListener(`click`, handler);
   }
 
 }

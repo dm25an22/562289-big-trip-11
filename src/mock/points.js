@@ -2,7 +2,7 @@ import {getRandomNumber, getRandomItem, getRandomBoolean} from "../utils/common"
 import {castTimeFormat} from "../date-helpers";
 import {LABEL_IN, LABEL_TO} from "../consts";
 
-const QUANTITY_PINS = 15;
+const QUANTITY_PINS = 3;
 
 const LabelOfType = {
   'Taxi': LABEL_TO,
@@ -146,7 +146,8 @@ const generatePoints = () => {
     start: new Date(startDate),
     end: getEnd(startDate),
     description: getRandomStr(description, getRandomNumber(0, 5)),
-    photos: getRandomPhotos(getRandomNumber(0, 7))
+    photos: getRandomPhotos(getRandomNumber(0, 7)),
+    isFavorite: getRandomBoolean()
   };
 };
 
