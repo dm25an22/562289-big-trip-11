@@ -2,54 +2,18 @@ import SortComponent, {SortType} from "../components/sort";
 import NoPointsComponent from "../components/no-points";
 import InfoDestinationComponent from "../components/info-destination";
 import DayComponent from "../components/day";
-import EventPointComponent from "../components/event-point";
-import EventEditComponent from "../components/event-edit";
 import InfoCostComponent from "../components/info-cost";
+import PointController from "./point-controller";
 
 import {getDurationTravel} from "../date-helpers";
 import {getRodLine, getTotalPrice, getSortedPoints} from "../utils/common";
-import {RenderPosition, render, replace} from "../utils/render";
+import {RenderPosition, render} from "../utils/render";
 
 
 const renderPoint = (container, points) => {
-
   points.forEach((point) => {
-
-    const eventPoint = new EventPointComponent(point);
-    const eventPointEdit = new EventEditComponent(point);
-
-    const replacePointToEdit = () => {
-      replace(eventPointEdit, eventPoint);
-    };
-
-    const replaceEditToPoint = () => {
-      replace(eventPoint, eventPointEdit);
-    };
-
-    const onEscPress = (evt) => {
-      const isEsc = evt.key === `Escape` || evt.key === `Esc`;
-
-      if (isEsc) {
-        replaceEditToPoint();
-        document.removeEventListener(`keydown`, onEscPress);
-      }
-    };
-
-    eventPoint.setClickHandler(() => {
-      replacePointToEdit();
-      document.addEventListener(`keydown`, onEscPress);
-    });
-
-    eventPointEdit.setSubmitHandler((evt) => {
-      evt.preventDefault();
-      replaceEditToPoint();
-    });
-
-    eventPointEdit.setClickHandler(() => {
-      replaceEditToPoint();
-    });
-
-    render(container, eventPoint, RenderPosition.BEFOREEND);
+    const pointController = new PointController(container);
+    pointController.render(point);
   });
 };
 
@@ -99,46 +63,51 @@ export default class TripController {
     this._tripEvents = tripEventsContainer;
     this._tripInfoContainer = tripInfoContainer;
     this._dayContainer = dayContainer;
+    this._points = [];
 
     this._noPointsComponent = new NoPointsComponent();
     this._sortComponent = new SortComponent();
   }
 
   render(points) {
-    const tripInfoContainer = this._tripInfoContainer.getElement();
-    const dayContainer = this._dayContainer.getElement();
-    const tripEvents = this._tripEvents;
+    this._tripInfoContainer = this._tripInfoContainer.getElement();
+    this._dayContainer = this._dayContainer.getElement();
+    this._points = points;
 
     if (!points.length) {
-      render(tripEvents, this._noPointsComponent, RenderPosition.BEFOREEND);
-      render(tripInfoContainer, new InfoCostComponent(), RenderPosition.BEFOREEND);
+      render(this._tripEvents, this._noPointsComponent, RenderPosition.BEFOREEND);
+      render(this._tripInfoContainer, new InfoCostComponent(), RenderPosition.BEFOREEND);
       return;
     }
 
-    const tripEventsFirstChild = tripEvents.querySelector(`:first-child`);
+    const tripEventsFirstChild = this._tripEvents.querySelector(`:first-child`);
     render(tripEventsFirstChild, this._sortComponent, RenderPosition.AFTER);
 
+
+    renderEvents(this._tripInfoContainer, this._dayContainer, points);
+    this._onSortTypeChangeHandler();
+
+  }
+  
+  _onSortTypeChangeHandler() {
     this._sortComponent.setSortTypeChangeHandler((typeSort) => {
 
-      const tripSortItemDay = tripEvents.querySelector(`.trip-sort__item--day`);
-      const sortedPoints = getSortedPoints(typeSort, points);
+      const tripSortItemDay = this._tripEvents.querySelector(`.trip-sort__item--day`);
+      const sortedPoints = getSortedPoints(typeSort, this._points);
 
-      dayContainer.innerHTML = ``;
+      this._dayContainer.innerHTML = ``;
 
       if (typeSort === SortType.EVENT) {
         tripSortItemDay.textContent = `Day`;
-        tripInfoContainer.innerHTML = ``;
+        this._tripInfoContainer.innerHTML = ``;
 
-        renderEvents(tripInfoContainer, dayContainer, sortedPoints);
+        renderEvents(this._tripInfoContainer, this._dayContainer, sortedPoints);
         return;
       }
 
-      renderEvents(tripInfoContainer, dayContainer, sortedPoints, true);
+      renderEvents(this._tripInfoContainer, this._dayContainer, sortedPoints, true);
 
     });
-
-    renderEvents(tripInfoContainer, dayContainer, points);
-
   }
 
 }
