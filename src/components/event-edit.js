@@ -94,6 +94,7 @@ const createNewEventEditTemplate = (dataPoint, options = {}) => {
   const {eventPrice, start, end, isFavorite} = dataPoint;
   const {type, offer, destination, description, photos} = options;
 
+
   const imgMurkup = renderImgMurkup(photos);
   const offerMurkup = renderOffersMurkup(offer);
   const typeIcon = renderTypeIcon(type);
