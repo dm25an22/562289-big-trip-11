@@ -1,6 +1,6 @@
 import {castTimeFormatForEdit} from "../date-helpers";
-import {LabelOfType} from "../mock/points";
-import AbstractComponent from "./abstract-component";
+import {LabelOfType, getOffers, cities} from "../mock/points";
+import AbstractSmartComponent from "./abstract-smart-component";
 
 export const renderTypeIcon = (type) => {
   return (
@@ -90,8 +90,10 @@ export const renderImgMurkup = (photos) => {
   }).join(`\n`);
 };
 
-const createNewEventEditTemplate = (dataPoint) => {
-  const {destination, type, eventPrice, offer, description, photos, start, end} = dataPoint;
+const createNewEventEditTemplate = (dataPoint, options = {}) => {
+  const {eventPrice, start, end, isFavorite} = dataPoint;
+  const {type, offer, destination, description, photos} = options;
+
 
   const imgMurkup = renderImgMurkup(photos);
   const offerMurkup = renderOffersMurkup(offer);
@@ -118,10 +120,10 @@ const createNewEventEditTemplate = (dataPoint) => {
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
           <datalist id="destination-list-1">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
-            <option value="Saint Petersburg"></option>
+            <option value="Bergen"></option>
+            <option value="Oslo"></option>
+            <option value="Gothenburg"></option>
+            <option value="Kopenhagen"></option>
           </datalist>
         </div>
 
@@ -150,7 +152,7 @@ const createNewEventEditTemplate = (dataPoint) => {
 
         <button class="event__reset-btn" type="reset">Delete</button>
 
-      <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" checked>
+      <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
       <label class="event__favorite-btn" for="event-favorite-1">
         <span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -190,23 +192,94 @@ const createNewEventEditTemplate = (dataPoint) => {
   );
 };
 
-export default class EventEdit extends AbstractComponent {
+
+export default class EventEdit extends AbstractSmartComponent {
   constructor(data) {
     super();
 
     this._data = data;
+
+    this._type = data.type;
+    this._offers = data.offer;
+    this._destination = data.destination;
+    this._photos = data.photos;
+    this._description = data.description;
+
+    this._subscribeOnEvents();
+
+    this._setSubmitHandler = null;
+    this._setClickHandler = null;
+    this._setClickOnStarHandler = null;
   }
 
   getTemplate() {
-    return createNewEventEditTemplate(this._data);
+    return createNewEventEditTemplate(this._data, {
+      type: this._type,
+      offer: this._offers,
+      destination: this._destination,
+      description: this._description,
+      photos: this._photos
+    });
+  }
+
+  recoveryListeners() {
+    this.setSubmitHandler(this._setSubmitHandler);
+    this.setClickHandler(this._setClickHandler);
+    this.setClickOnStarHandler(this._setClickOnStarHandler);
+    this._subscribeOnEvents();
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    element.querySelector(`.event__type-list`)
+      .addEventListener(`change`, (evt) => {
+        this._type = evt.target.value;
+
+        const firstLetter = this._type[0].toUpperCase();
+        this._type = firstLetter.concat(this._type.slice(1));
+
+        this._offers = getOffers(this._type);
+
+        this.rerender();
+      });
+
+    element.querySelector(`#event-destination-1`)
+      .addEventListener(`change`, (evt) => {
+        this._destination = evt.target.value;
+        this._description = cities[this._destination].description;
+        this._photos = cities[this._destination].photo;
+
+        this.rerender();
+      });
+
+  }
+
+  reset() {
+    const data = this._data;
+
+    this._type = data.type;
+    this._offers = data.offer;
+    this._destination = data.destination;
+    this._photos = data.photos;
+    this._description = data.description;
+
+    this.rerender();
   }
 
   setSubmitHandler(handler) {
     this.getElement().addEventListener(`submit`, handler);
+    this._setSubmitHandler = handler;
   }
 
   setClickHandler(handler) {
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
+    this._setClickHandler = handler;
+  }
+
+  setClickOnStarHandler(handler) {
+    this.getElement().querySelector(`.event__favorite-icon`).addEventListener(`click`, handler);
+    this._setClickOnStarHandler = handler;
   }
 
 }

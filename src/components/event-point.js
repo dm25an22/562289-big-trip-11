@@ -3,13 +3,13 @@ import {LabelOfType} from "../mock/points";
 import AbstractComponent from "./abstract-component";
 
 export const renderOffers = (offers) => {
-  return offers.slice(0, 3).filter((el) => el.isChecked).map((it) => {
+  return offers.filter((el) => el.isChecked).map((it) => {
     return `<li class="event__offer">
       <span class="event__offer-title">${it.title}</span>
       ${it.title ? `&plus;&euro;&nbsp;` : ``}
       <span class="event__offer-price">${it.price}</span>
     </li>`;
-  }).join(`\n`);
+  }).slice(0, 3).join(`\n`);
 };
 
 const createEventPointTemplate = (dataPoint) => {
