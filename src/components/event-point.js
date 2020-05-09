@@ -38,7 +38,7 @@ const createEventPointTemplate = (dataPoint) => {
         </div>
 
         <p class="event__price">
-          &euro;&nbsp;<span class="event__price-value">${eventPrice}</span>
+          &euro;&nbsp;<span class="event__price-value">${eventPrice} 213</span>
         </p>
 
         <h4 class="visually-hidden">Offers:</h4>
