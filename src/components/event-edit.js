@@ -1,4 +1,3 @@
-import {castTimeFormatForEdit} from "../date-helpers";
 import {LabelOfType, getOffers, cities} from "../mock/points";
 import AbstractSmartComponent from "./abstract-smart-component";
 import flatpickr from "flatpickr";
@@ -96,14 +95,11 @@ export const renderImgMurkup = (photos) => {
 
 const createNewEventEditTemplate = (dataPoint, options = {}) => {
   const {eventPrice, isFavorite} = dataPoint;
-  const {type, offer, destination, description, photos, start, end} = options;
+  const {type, offer, destination, description, photos} = options;
 
   const imgMurkup = renderImgMurkup(photos);
   const offerMurkup = renderOffersMurkup(offer);
   const typeIcon = renderTypeIcon(type);
-
-  const startData = castTimeFormatForEdit(start);
-  const endData = castTimeFormatForEdit(end);
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -134,12 +130,12 @@ const createNewEventEditTemplate = (dataPoint, options = {}) => {
           <label class="visually-hidden" for="event-start-time-1">
             From
           </label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startData}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endData}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -235,8 +231,6 @@ export default class EventEdit extends AbstractSmartComponent {
       destination: this._destination,
       description: this._description,
       photos: this._photos,
-      start: this._start,
-      end: this._end,
     });
   }
 
@@ -291,6 +285,7 @@ export default class EventEdit extends AbstractSmartComponent {
         this._start = new Date(evt.target.value);
         this._flatpickrEnd.set(`minDate`, this._start);
         this._flatpickrEnd.setDate(this._start);
+        this._end = this._start;
       });
 
     element.querySelector(`#event-end-time-1`)

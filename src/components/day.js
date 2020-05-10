@@ -3,7 +3,6 @@ import {getMonth, getDay} from "../date-helpers";
 import AbstractComponent from "./abstract-component";
 
 const createDayTemplate = (date, index) => {
-
   const mounth = getMonth(date);
   const day = getDay(date);
 
