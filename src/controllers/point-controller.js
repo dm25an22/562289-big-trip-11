@@ -76,6 +76,7 @@ export default class PointController {
     const isEsc = evt.key === `Escape` || evt.key === `Esc`;
 
     if (isEsc) {
+      this._eventPointEdit.reset();
       this._replaceEditToPoint();
       document.removeEventListener(`keydown`, this._onEscPress);
     }

@@ -24,5 +24,3 @@ render(tripEvents, dayCounterComponent, RenderPosition.BEFOREEND);
 
 const tripController = new TripController(tripEvents, tripInfoComponent, dayCounterComponent);
 tripController.render(mockData);
-
-

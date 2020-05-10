@@ -1,9 +1,8 @@
 import {getRandomNumber, getRandomItem, getRandomBoolean} from "../utils/common";
-import {castTimeFormat} from "../date-helpers";
 import {LABEL_IN, LABEL_TO} from "../consts";
+import moment from "moment";
 
-const QUANTITY_PINS = 15;
-
+const QUANTITY_PINS = 16;
 const LabelOfType = {
   'Taxi': LABEL_TO,
   'Bus': LABEL_TO,
@@ -108,22 +107,16 @@ const getRandomPhotos = (count) => {
   return result;
 };
 
-const getStart = (dateStr = `2020-09-07T08:00`) => {
-  const date = new Date(dateStr);
 
-  const year = date.getFullYear();
-  const month = castTimeFormat(date.getMonth());
+const getStart = () => {
+  const date = moment();
+  date.set(`hour`, 8);
 
-  date.setDate(date.getDate() + getRandomNumber(0, 4));
-  const day = castTimeFormat(date.getDate());
+  date.add(getRandomNumber(0, 4), `d`);
+  date.add(getRandomNumber(0, 12), `h`);
+  date.set(`minute`, getRandomNumber(0, 59));
 
-  date.setHours(date.getHours() + getRandomNumber(0, 12));
-  const hours = castTimeFormat(date.getHours());
-
-  date.setMinutes(date.getMinutes() + getRandomNumber(0, 59));
-  const minutes = castTimeFormat(date.getMinutes());
-
-  return `${year}-${month}-${day}T${hours}:${minutes}`;
+  return date;
 };
 
 export const cities = {
@@ -147,12 +140,12 @@ export const cities = {
 
 
 const getEnd = (date) => {
-  date = new Date(date);
+  const dateEnd = moment(date);
 
-  date.setMinutes(date.getMinutes() + getRandomNumber(0, 59));
-  date.setHours(date.getHours() + getRandomNumber(1, 4));
+  dateEnd.add(getRandomNumber(1, 4), `h`);
+  dateEnd.set(`minute`, getRandomNumber(0, 59));
 
-  return date;
+  return dateEnd;
 };
 
 const generatePoints = () => {
@@ -166,7 +159,7 @@ const generatePoints = () => {
     eventPrice: getRandomNumber(30, 140),
     offer: getOffers(currentType),
     start: new Date(startDate),
-    end: getEnd(startDate),
+    end: new Date(getEnd(startDate)),
     description: cities[currentDestination].description,
     photos: cities[currentDestination].photo,
     isFavorite: getRandomBoolean()

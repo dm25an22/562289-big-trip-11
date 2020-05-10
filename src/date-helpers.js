@@ -1,108 +1,60 @@
 import {MONTHS} from "./consts";
+import moment from "moment";
 
 const getDurationTravel = (data) => {
-  const startDay = new Date(data[0]).getDate();
-  const startMonth = MONTHS[new Date(data[0]).getMonth()];
+  const startDay = moment(data[0]).get(`date`);
+  const startMonth = MONTHS[moment(data[0]).get(`month`)];
 
-  const endtDay = new Date(data[data.length - 1]).getDate();
-  const endMonth = MONTHS[new Date(data[data.length - 1]).getMonth()];
+  const endtDay = moment(data[data.length - 1]).get(`date`);
+  const endMonth = MONTHS[moment(data[data.length - 1]).get(`month`)];
 
   return [startDay, startMonth, endtDay, endMonth];
 };
 
 const getStartEndEvent = (start, end) => {
-  const satrHours = castTimeFormat(start.getHours());
-  const starMinute = castTimeFormat(start.getMinutes());
+  const startTime = moment(start).format(`HH:mm`);
+  const endTime = moment(end).format(`HH:mm`);
 
-  const endHours = castTimeFormat(end.getHours());
-  const endMinute = castTimeFormat(end.getMinutes());
-
-  return [satrHours, starMinute, endHours, endMinute];
+  return [startTime, endTime];
 };
 
 const getMonth = (date) => {
-  const monthIndex = new Date(date).getMonth();
+  const monthIndex = moment(date).get(`month`);
 
   return MONTHS[monthIndex];
 };
 
 const getDay = (date) => {
-  const day = new Date(date).getDate();
+  const day = moment(date).get(`date`);
 
   return day;
 };
 
-const castTimeFormatForEdit = (date) => {
-  const year = castTimeFormat(date.getFullYear());
-  const month = castTimeFormat(date.getMonth() + 1);
-  const day = castTimeFormat(date.getDate());
-  const hour = castTimeFormat(date.getHours());
-  const minutes = castTimeFormat(date.getMinutes());
-
-  return `${year}/${month}/${day} ${hour}:${minutes}`;
-};
 
 const getDurationTime = (start, end) => {
-  const diff = end.getTime() - start.getTime();
+  const a = moment(start);
+  const b = moment(end);
 
-  let hours;
-  let minutes;
+  const duration = moment.duration(b.diff(a));
 
-  let minutesDiff = diff / 60 / 1000;
-  let hoursdDiff = diff / 3600 / 1000;
-
-  hours = Math.floor(hoursdDiff);
-  minutes = minutesDiff - 60 * hours;
+  const hours = duration.get(`hour`);
+  const minutes = duration.get(`minutes`);
 
   return `${hours > 0 ? `${hours}H` : ``} ${minutes}M`;
 };
 
 const getDurationTimeInMinutes = (start, end) => {
-  const diff = end.getTime() - start.getTime();
+  const a = moment(start);
+  const b = moment(end);
 
-  let hours;
-  let minutes;
-
-  let minutesDiff = diff / 60 / 1000;
-  let hoursdDiff = diff / 3600 / 1000;
-
-  hours = Math.floor(hoursdDiff);
-  minutes = minutesDiff - 60 * hours;
-
-  return hours * 60 + minutes;
-};
-
-const getFormatMonthDate = (date) => {
-  const monthIndex = date.getMonth();
-  const month = MONTHS[monthIndex];
-
-  return month;
-};
-
-const castTimeFormat = (value) => {
-  value = String(value);
-
-  let result;
-
-  if (value.length === 4) {
-    result = `${value.slice(2)}`;
-  } else if (value < 10) {
-    result = `0${value}`;
-  } else {
-    result = String(value);
-  }
-
-  return result;
+  return moment(b).diff(a, `minutes`);
 };
 
 export {
   getDurationTravel,
   getStartEndEvent,
   getMonth,
-  castTimeFormatForEdit,
   getDurationTime,
-  getFormatMonthDate,
   getDay,
-  castTimeFormat,
   getDurationTimeInMinutes
 };

@@ -1,6 +1,9 @@
-import {castTimeFormatForEdit} from "../date-helpers";
 import {LabelOfType, getOffers, cities} from "../mock/points";
 import AbstractSmartComponent from "./abstract-smart-component";
+import flatpickr from "flatpickr";
+
+import "flatpickr/dist/flatpickr.min.css";
+import "flatpickr/dist/themes/material_blue.css";
 
 export const renderTypeIcon = (type) => {
   return (
@@ -91,16 +94,12 @@ export const renderImgMurkup = (photos) => {
 };
 
 const createNewEventEditTemplate = (dataPoint, options = {}) => {
-  const {eventPrice, start, end, isFavorite} = dataPoint;
+  const {eventPrice, isFavorite} = dataPoint;
   const {type, offer, destination, description, photos} = options;
-
 
   const imgMurkup = renderImgMurkup(photos);
   const offerMurkup = renderOffersMurkup(offer);
   const typeIcon = renderTypeIcon(type);
-
-  const startData = castTimeFormatForEdit(start);
-  const endData = castTimeFormatForEdit(end);
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -131,12 +130,12 @@ const createNewEventEditTemplate = (dataPoint, options = {}) => {
           <label class="visually-hidden" for="event-start-time-1">
             From
           </label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startData}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endData}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -192,6 +191,13 @@ const createNewEventEditTemplate = (dataPoint, options = {}) => {
   );
 };
 
+const resetFlatpicer = (flatpick) => {
+  if (flatpick) {
+    flatpick.destroy();
+    flatpick = null;
+  }
+};
+
 
 export default class EventEdit extends AbstractSmartComponent {
   constructor(data) {
@@ -204,12 +210,18 @@ export default class EventEdit extends AbstractSmartComponent {
     this._destination = data.destination;
     this._photos = data.photos;
     this._description = data.description;
+    this._start = data.start;
+    this._end = data.end;
 
-    this._subscribeOnEvents();
+    this._flatpickrStart = null;
+    this._flatpickrEnd = null;
+    this._startDate = null;
 
     this._setSubmitHandler = null;
     this._setClickHandler = null;
     this._setClickOnStarHandler = null;
+    this._applyFlatpickr();
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
@@ -218,7 +230,7 @@ export default class EventEdit extends AbstractSmartComponent {
       offer: this._offers,
       destination: this._destination,
       description: this._description,
-      photos: this._photos
+      photos: this._photos,
     });
   }
 
@@ -229,11 +241,63 @@ export default class EventEdit extends AbstractSmartComponent {
     this._subscribeOnEvents();
   }
 
+
+  _applyFlatpickr() {
+    resetFlatpicer(this._flatpickrStart);
+    resetFlatpicer(this._flatpickrEnd);
+
+    const evtStartTime = this.getElement().querySelector(`#event-start-time-1`);
+    const evtEndTime = this.getElement().querySelector(`#event-end-time-1`);
+
+    const time = `time_24hr`;
+    const option = {
+      allowInput: true,
+      altInput: true,
+      enableTime: true,
+      altFormat: `d/m/y H:i`,
+      [time]: true,
+    };
+
+    const startDate = this._start;
+
+    this._flatpickrStart = flatpickr(evtStartTime, Object.assign({}, option, {
+      minDate: startDate,
+      defaultDate: this._start,
+    }));
+
+    this._flatpickrEnd = flatpickr(evtEndTime, Object.assign({}, option, {
+      defaultDate: this._end,
+      minDate: this._start,
+    }));
+  }
+
+
+  rerender() {
+    super.rerender();
+    this._applyFlatpickr();
+  }
+
   _subscribeOnEvents() {
     const element = this.getElement();
 
+    element.querySelector(`#event-start-time-1`)
+      .addEventListener(`input`, (evt) => {
+        this._start = new Date(evt.target.value);
+        this._flatpickrEnd.set(`minDate`, this._start);
+        this._flatpickrEnd.setDate(this._start);
+        this._end = this._start;
+      });
+
+    element.querySelector(`#event-end-time-1`)
+      .addEventListener(`input`, (evt) => {
+        this._end = new Date(evt.target.value);
+      });
+
     element.querySelector(`.event__type-list`)
       .addEventListener(`change`, (evt) => {
+        if (this._type.toLowerCase() === evt.target.value) {
+          return;
+        }
         this._type = evt.target.value;
 
         const firstLetter = this._type[0].toUpperCase();
@@ -246,6 +310,10 @@ export default class EventEdit extends AbstractSmartComponent {
 
     element.querySelector(`#event-destination-1`)
       .addEventListener(`change`, (evt) => {
+        if (this._destination === evt.target.value) {
+          return;
+        }
+
         this._destination = evt.target.value;
         this._description = cities[this._destination].description;
         this._photos = cities[this._destination].photo;
@@ -263,6 +331,8 @@ export default class EventEdit extends AbstractSmartComponent {
     this._destination = data.destination;
     this._photos = data.photos;
     this._description = data.description;
+    this._start = data.start;
+    this._end = data.end;
 
     this.rerender();
   }
