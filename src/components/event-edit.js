@@ -284,8 +284,6 @@ export default class EventEdit extends AbstractSmartComponent {
       .addEventListener(`input`, (evt) => {
         this._start = new Date(evt.target.value);
         this._flatpickrEnd.set(`minDate`, this._start);
-        this._flatpickrEnd.setDate(this._start);
-        this._end = this._start;
       });
 
     element.querySelector(`#event-end-time-1`)
