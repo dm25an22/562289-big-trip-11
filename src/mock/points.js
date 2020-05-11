@@ -154,6 +154,7 @@ const generatePoints = () => {
   const currentType = getRandomItem(typeEvents);
 
   return {
+    id: String(new Date() + Math.random()),
     type: currentType,
     destination: currentDestination,
     eventPrice: getRandomNumber(30, 140),
