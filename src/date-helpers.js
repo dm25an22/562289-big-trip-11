@@ -41,10 +41,11 @@ const getDurationTime = (start, end) => {
 
   const duration = moment.duration(b.diff(a));
 
+  const day = duration.get(`day`);
   const hours = duration.get(`hour`);
   const minutes = duration.get(`minutes`);
 
-  return `${hours > 0 ? `${hours}H` : ``} ${minutes}M`;
+  return `${day > 0 ? `${day}D` : ``} ${hours > 0 ? `${hours}H` : ``} ${minutes}M`;
 };
 
 const getDurationTimeInMinutes = (start, end) => {

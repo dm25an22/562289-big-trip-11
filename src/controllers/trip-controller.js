@@ -22,54 +22,6 @@ const renderPoint = (container, points, onDataChange, onViewChange) => {
   });
 };
 
-// const renderEvents = (tripInfoContainer, dayContainer, points, onDataChange, onViewChange, isSort) => {
-
-//   let pointControllers = [];
-
-//   if (isSort) {
-//     const dayComponent = new DayComponent();
-//     render(dayContainer, dayComponent, RenderPosition.BEFOREEND);
-
-//     const day = dayComponent.getElement().querySelector(`.trip-events__list`);
-//     const tripSortItemDay = document.querySelector(`.trip-sort__item--day`);
-
-
-//     const dayInfo = dayContainer.querySelector(`.day__info`);
-//     dayInfo.innerHTML = ``;
-//     tripSortItemDay.textContent = ``;
-
-//     const newPoint = renderPoint(day, points, onDataChange, onViewChange);
-//     pointControllers = pointControllers.concat(newPoint);
-
-//   } else {
-
-//     const datesList = [...new Set(points.map((elem) => moment(elem.start).format(`YYYY-MM-DD`)))];
-//     datesList.sort((a, b) => new Date(a) - new Date(b));
-
-//     const roadLine = getRodLine(points);
-//     const durationTravel = getDurationTravel(datesList);
-//     const totalPrice = getTotalPrice(points);
-
-//     this._infoCostComponent = new InfoCostComponent(totalPrice);
-//     render(tripInfoContainer, new InfoCostComponent(totalPrice), RenderPosition.BEFOREEND);
-//     render(tripInfoContainer, new InfoDestinationComponent(roadLine, durationTravel), RenderPosition.AFTERBEGIN);
-
-//     datesList.forEach((date, i) => {
-//       const dayComponent = new DayComponent(date, i + 1);
-//       render(dayContainer, dayComponent, RenderPosition.BEFOREEND);
-//       const day = dayComponent.getElement().querySelector(`.trip-events__list`);
-
-//       const pointsFilter = points.filter((el) => moment(el.start).format(`YYYY-MM-DD`) === date);
-
-//       const newPoint = renderPoint(day, pointsFilter, onDataChange, onViewChange);
-//       pointControllers = pointControllers.concat(newPoint);
-//     });
-//   }
-
-//   return pointControllers;
-// };
-
-
 export default class TripController {
   constructor(mainTrip, pointsModel, filterController) {
 
@@ -194,7 +146,7 @@ export default class TripController {
     return pointControllers;
   }
 
-  _onDataChange(pointController, oldData, newData) {
+  _onDataChange(pointController, oldData, newData, isFavotite = false) {
     if (oldData === emptyPoint) {
       this._createNewPoint = null;
       if (newData === null) {
@@ -214,8 +166,13 @@ export default class TripController {
       this._updateTripEvents();
     } else {
       const isSuccess = this._pointsModel.updatePoints(oldData.id, newData);
+
       if (isSuccess) {
-        this._updateTripEvents();
+        if (isFavotite) {
+          pointController.render(newData, Mode.EDIT);
+        } else {
+          this._updateTripEvents();
+        }
       }
     }
 
@@ -226,9 +183,7 @@ export default class TripController {
     if (!this._pointsModel.getPointsAll().length) {
       this._createNoPoints();
     } else {
-      if (this._noPointsComponent) {
-        this._clearNoPointsComponent();
-      }
+      this._clearComponent(this._noPointsComponent);
     }
   }
 
@@ -238,16 +193,15 @@ export default class TripController {
     }
 
     if (!this._pointsModel.getPointsAll().length) {
-      this._clearInfoDestination();
+      this._clearComponent(this._infoDestinationComponent);
     } else {
       this._sortComponent.resetSort();
       this._filterController.resetFlter();
       this._updateTripEvents();
     }
 
-    if (this._noPointsComponent) {
-      this._clearNoPointsComponent();
-    }
+    this._clearComponent(this._noPointsComponent);
+
 
     this._createNewPoint = new PointController(this._dayCounterComponent.getElement(), this._onDataChange, this._onViewChange);
     this._createNewPoint.render(emptyPoint, Mode.ADDING, true);
@@ -258,42 +212,30 @@ export default class TripController {
   }
 
   _createNoPoints() {
-    this._clearInfoDestination();
+    this._clearComponent(this._infoDestinationComponent);
+    this._clearComponent(this._sortComponent);
     this._renderNoPointsComponent();
-    this._clearSortComponent();
   }
 
-  _clearNoPointsComponent() {
-    remove(this._noPointsComponent);
-    this._noPointsComponent = null;
-  }
-
-  _clearInfoDestination() {
-    if (this._infoDestinationComponent) {
-      remove(this._infoDestinationComponent);
-      this._infoDestinationComponent = null;
+  _clearComponent(component) {
+    if (component) {
+      remove(component);
+      component = null;
     }
   }
 
   _clearTripInfoContainer() {
-    remove(this._tripInfoComponent);
-    this._tripInfoComponent = null;
-  }
-
-  _clearDayContainer() {
-    remove(this._dayCounterComponent);
-    this._dayCounterComponent = null;
-  }
-
-  _clearSortComponent() {
-    remove(this._sortComponent);
-    this._sortComponent = null;
+    if (this._tripInfoComponent) {
+      remove(this._tripInfoComponent);
+      this._tripInfoComponent = null;
+    }
   }
 
   _removeEvents() {
     this._pointControllers.forEach((pointController) => pointController.destroy());
+    this._clearComponent(this._dayCounterComponent);
+
     this._clearTripInfoContainer();
-    this._clearDayContainer();
   }
 
   _updateTripEvents() {
@@ -305,7 +247,7 @@ export default class TripController {
     const tripSortItemDay = document.querySelector(`.trip-sort__item--day`);
     const sortedPoints = getSortedPoints(typeSort, this._pointsModel.getPoints());
 
-    this._clearDayContainer();
+    this._clearComponent(this._dayCounterComponent);
 
     if (typeSort === SortType.EVENT) {
       tripSortItemDay.textContent = `Day`;
@@ -321,7 +263,7 @@ export default class TripController {
     this._updateTripEvents();
 
     if (!this._pointsModel.getPoints().length) {
-      this._clearInfoDestination();
+      this._clearComponent(this._infoDestinationComponent);
     }
   }
 
