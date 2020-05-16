@@ -55,10 +55,6 @@ export default class PointController {
     });
 
     this._eventPointEdit.setSubmitHandler((evt) => {
-      // if (mode !== Mode.ADDING) {
-      //   this._replaceEditToPoint();
-      // }
-
       const data = this._eventPointEdit.getData();
       evt.preventDefault();
       this._onDataChange(this, point, Object.assign({}, point, {
@@ -83,8 +79,8 @@ export default class PointController {
 
     this._eventPointEdit.setClickOnStarHandler(() => {
       this._onDataChange(this, point, Object.assign({}, point, {
-        isFavorite: !point.isFavorite
-      }));
+        isFavorite: !point.isFavorite,
+      }), true);
     });
 
     switch (mode) {
@@ -102,6 +98,10 @@ export default class PointController {
         document.addEventListener(`keydown`, this._onEscPress);
         render(this._container, this._eventPointEdit, RenderPosition.BEFORE);
         break;
+
+      case Mode.EDIT:
+        replace(this._eventPoint, oldEventPoint);
+        replace(this._eventPointEdit, oldEventPointEdit);
     }
   }
 
