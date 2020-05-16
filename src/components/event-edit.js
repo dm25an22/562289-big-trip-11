@@ -100,6 +100,11 @@ export const renderImgMurkup = (photos) => {
   }).join(`\n`);
 };
 
+const rendrDestination = () => {
+  return Object.keys(cities).map((city) => {
+    return `<option value="${city}"></option>`;
+  }).join(`\n`);
+};
 
 const createNewEventEditTemplate = (dataPoint, options = {}) => {
   const {isFavorite} = dataPoint;
@@ -108,6 +113,7 @@ const createNewEventEditTemplate = (dataPoint, options = {}) => {
   const imgMurkup = renderImgMurkup(photos);
   const offerMurkup = renderOffersMurkup(offer);
   const typeIcon = renderTypeIcon(type);
+  const destinationList = rendrDestination();
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -127,10 +133,7 @@ const createNewEventEditTemplate = (dataPoint, options = {}) => {
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1" required>
           <datalist id="destination-list-1">
-            <option value="Bergen"></option>
-            <option value="Oslo"></option>
-            <option value="Gothenburg"></option>
-            <option value="Kopenhagen"></option>
+            ${destinationList}
           </datalist>
         </div>
 
