@@ -5,6 +5,8 @@ import DayComponent from "../components/day";
 import InfoCostComponent from "../components/info-cost";
 import DayCounterComponent from "../components/day-counter";
 import PointController, {Mode, emptyPoint} from "./point-controller";
+import TripInfoComponent from "../components/trip-info";
+
 
 import {getDurationTravel} from "../date-helpers";
 import {getRodLine, getTotalPrice, getSortedPoints} from "../utils/common";
@@ -67,10 +69,11 @@ const renderPoint = (container, points, onDataChange, onViewChange) => {
 //   return pointControllers;
 // };
 
-export default class TripController {
-  constructor(tripInfoContainer, pointsModel, filterController) {
 
-    this._tripInfoContainer = tripInfoContainer;
+export default class TripController {
+  constructor(mainTrip, pointsModel, filterController) {
+
+    this._mainTrip = mainTrip;
     this._pointsModel = pointsModel;
     this._filterController = filterController;
     this._pointControllers = [];
@@ -78,12 +81,11 @@ export default class TripController {
 
     this._tripEvents = document.querySelector(`.trip-events`);
     this._tripEventsFirstChild = this._tripEvents.querySelector(`:first-child`);
+    this._tripInfoComponent = null;
     this._noPointsComponent = null;
-    this._infoCostComponent = null;
     this._infoDestinationComponent = null;
     this._dayCounterComponent = null;
-    this._sortComponent = new SortComponent();
-    this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChangeHandler.bind(this));
+    this._sortComponent = null;
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
     this._pointsModel.setFilterHandler(this._onFilterChange.bind(this));
@@ -93,30 +95,57 @@ export default class TripController {
     const points = this._pointsModel.getPoints();
 
     if (!points.length) {
-      this._noPointsComponent = new NoPointsComponent();
-      render(this._tripEvents, this._noPointsComponent, RenderPosition.BEFOREEND);
-      render(this._tripInfoContainer.getElement(), new InfoCostComponent(), RenderPosition.BEFOREEND);
-
-      this._dayCounterComponent = new DayCounterComponent();
-      render(this._tripEvents, this._dayCounterComponent, RenderPosition.BEFOREEND);
-
+      this._noPointsCaseRender();
       return;
     }
 
-
-    render(this._tripEventsFirstChild, this._sortComponent, RenderPosition.AFTER);
-
+    this._renderSortComponent();
     this._renderPoints(points);
   }
 
-  _renderPoints(points, isSort = false) {
-    this._dayCounterComponent = new DayCounterComponent();
-    render(this._tripEvents, this._dayCounterComponent, RenderPosition.BEFOREEND);
+  _noPointsCaseRender() {
+    this._renderTripInfoComponent();
+    this._renderDayCounterComponent();
+    this._renderNoPointsComponent();
+    render(this._tripInfoComponent.getElement(), new InfoCostComponent(), RenderPosition.BEFOREEND);
+  }
 
-    const tripInfoContainer = this._tripInfoContainer.getElement();
+  _renderPoints(points, isSort = false) {
+    if (!this._tripInfoComponent) {
+      this._renderTripInfoComponent();
+    }
+
+    if (!this._sortComponent) {
+      this._renderSortComponent();
+    }
+
+    this._renderDayCounterComponent();
+
+    const tripInfoContainer = this._tripInfoComponent.getElement();
     const dayContainer = this._dayCounterComponent.getElement();
 
     this._pointControllers = this._renderEvents(tripInfoContainer, dayContainer, points, this._onDataChange, this._onViewChange, isSort);
+  }
+
+  _renderNoPointsComponent() {
+    this._noPointsComponent = new NoPointsComponent();
+    render(this._tripEvents, this._noPointsComponent, RenderPosition.BEFOREEND);
+  }
+
+  _renderDayCounterComponent() {
+    this._dayCounterComponent = new DayCounterComponent();
+    render(this._tripEvents, this._dayCounterComponent, RenderPosition.BEFOREEND);
+  }
+
+  _renderTripInfoComponent() {
+    this._tripInfoComponent = new TripInfoComponent();
+    render(this._mainTrip, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
+  }
+
+  _renderSortComponent() {
+    this._sortComponent = new SortComponent();
+    this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChangeHandler.bind(this));
+    render(this._tripEventsFirstChild, this._sortComponent, RenderPosition.AFTER);
   }
 
   _renderEvents(tripInfoContainer, dayContainer, points, onDataChange, onViewChange, isSort) {
@@ -146,7 +175,6 @@ export default class TripController {
       const durationTravel = getDurationTravel(datesList);
       const totalPrice = getTotalPrice(points);
 
-      // this._infoCostComponent = new InfoCostComponent(totalPrice);
       render(tripInfoContainer, new InfoCostComponent(totalPrice), RenderPosition.BEFOREEND);
       this._infoDestinationComponent = new InfoDestinationComponent(roadLine, durationTravel);
       render(tripInfoContainer, this._infoDestinationComponent, RenderPosition.AFTERBEGIN);
@@ -199,8 +227,7 @@ export default class TripController {
       this._createNoPoints();
     } else {
       if (this._noPointsComponent) {
-        remove(this._noPointsComponent);
-        this._noPointsComponent = null;
+        this._clearNoPointsComponent();
       }
     }
   }
@@ -219,7 +246,7 @@ export default class TripController {
     }
 
     if (this._noPointsComponent) {
-      remove(this._noPointsComponent);
+      this._clearNoPointsComponent();
     }
 
     this._createNewPoint = new PointController(this._dayCounterComponent.getElement(), this._onDataChange, this._onViewChange);
@@ -232,26 +259,38 @@ export default class TripController {
 
   _createNoPoints() {
     this._clearInfoDestination();
-    this._noPointsComponent = new NoPointsComponent();
-    render(this._tripEvents, this._noPointsComponent, RenderPosition.BEFOREEND);
-    remove(this._sortComponent);
+    this._renderNoPointsComponent();
+    this._clearSortComponent();
+  }
+
+  _clearNoPointsComponent() {
+    remove(this._noPointsComponent);
+    this._noPointsComponent = null;
   }
 
   _clearInfoDestination() {
     if (this._infoDestinationComponent) {
       remove(this._infoDestinationComponent);
+      this._infoDestinationComponent = null;
     }
   }
 
   _clearTripInfoContainer() {
-    this._tripInfoContainer.getElement().innerHTML = ``;
+    remove(this._tripInfoComponent);
+    this._tripInfoComponent = null;
   }
 
   _clearDayContainer() {
     remove(this._dayCounterComponent);
+    this._dayCounterComponent = null;
   }
 
-  _removeEvents() {    
+  _clearSortComponent() {
+    remove(this._sortComponent);
+    this._sortComponent = null;
+  }
+
+  _removeEvents() {
     this._pointControllers.forEach((pointController) => pointController.destroy());
     this._clearTripInfoContainer();
     this._clearDayContainer();

@@ -2,7 +2,7 @@ import {getRandomNumber, getRandomItem, getRandomBoolean} from "../utils/common"
 import {LABEL_IN, LABEL_TO} from "../consts";
 import moment from "moment";
 
-const QUANTITY_PINS = 12;
+const QUANTITY_PINS = 0;
 const LabelOfType = {
   'Taxi': LABEL_TO,
   'Bus': LABEL_TO,
