@@ -34,10 +34,11 @@ export default class TripController {
     this._tripEvents = document.querySelector(`.trip-events`);
     this._tripEventsFirstChild = this._tripEvents.querySelector(`:first-child`);
     this._tripInfoComponent = null;
-    this._noPointsComponent = null;
+    this._noPointsComponent = new NoPointsComponent();
     this._infoDestinationComponent = null;
     this._dayCounterComponent = null;
-    this._sortComponent = null;
+    this._sortComponent = new SortComponent();
+    this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChangeHandler.bind(this));
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
     this._pointsModel.setFilterHandler(this._onFilterChange.bind(this));
@@ -45,30 +46,24 @@ export default class TripController {
 
   render() {
     const points = this._pointsModel.getPoints();
+    render(this._tripEvents, this._noPointsComponent, RenderPosition.BEFOREEND);
+    this._noPointsComponent.hideElement();
 
     if (!points.length) {
-      this._noPointsCaseRender();
+      this._noPointsComponent.showElement();
+      this._infoDestinationComponent.hideElement();
       return;
     }
 
-    this._renderSortComponent();
+    render(this._tripEventsFirstChild, this._sortComponent, RenderPosition.AFTER);
+
     this._renderPoints(points);
   }
 
-  _noPointsCaseRender() {
-    this._renderTripInfoComponent();
-    this._renderDayCounterComponent();
-    this._renderNoPointsComponent();
-    render(this._tripInfoComponent.getElement(), new InfoCostComponent(), RenderPosition.BEFOREEND);
-  }
 
   _renderPoints(points, isSort = false) {
     if (!this._tripInfoComponent) {
       this._renderTripInfoComponent();
-    }
-
-    if (!this._sortComponent) {
-      this._renderSortComponent();
     }
 
     this._renderDayCounterComponent();
@@ -79,10 +74,6 @@ export default class TripController {
     this._pointControllers = this._renderEvents(tripInfoContainer, dayContainer, points, this._onDataChange, this._onViewChange, isSort);
   }
 
-  _renderNoPointsComponent() {
-    this._noPointsComponent = new NoPointsComponent();
-    render(this._tripEvents, this._noPointsComponent, RenderPosition.BEFOREEND);
-  }
 
   _renderDayCounterComponent() {
     this._dayCounterComponent = new DayCounterComponent();
@@ -92,12 +83,6 @@ export default class TripController {
   _renderTripInfoComponent() {
     this._tripInfoComponent = new TripInfoComponent();
     render(this._mainTrip, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
-  }
-
-  _renderSortComponent() {
-    this._sortComponent = new SortComponent();
-    this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChangeHandler.bind(this));
-    render(this._tripEventsFirstChild, this._sortComponent, RenderPosition.AFTER);
   }
 
   _renderEvents(tripInfoContainer, dayContainer, points, onDataChange, onViewChange, isSort) {
@@ -157,9 +142,6 @@ export default class TripController {
         this._pointsModel.addPoint(newData);
         pointController.destroy();
         this._updateTripEvents();
-
-        render(this._tripEventsFirstChild, this._sortComponent, RenderPosition.AFTER);
-        this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChangeHandler.bind(this));
       }
     } else if (newData === null) {
       this._pointsModel.removePoint(oldData.id);
@@ -181,9 +163,12 @@ export default class TripController {
 
   _isExistPoints() {
     if (!this._pointsModel.getPointsAll().length) {
-      this._createNoPoints();
+      this._noPointsComponent.showElement();
+      this._sortComponent.hideElement();
+      this._infoDestinationComponent.hideElement();
     } else {
-      this._clearComponent(this._noPointsComponent);
+      this._sortComponent.showElement();
+      this._noPointsComponent.hideElement();
     }
   }
 
@@ -200,8 +185,7 @@ export default class TripController {
       this._updateTripEvents();
     }
 
-    this._clearComponent(this._noPointsComponent);
-
+    this._noPointsComponent.hideElement();
 
     this._createNewPoint = new PointController(this._dayCounterComponent.getElement(), this._onDataChange, this._onViewChange);
     this._createNewPoint.render(emptyPoint, Mode.ADDING, true);
@@ -209,12 +193,6 @@ export default class TripController {
 
   _onViewChange() {
     this._pointControllers.forEach((it) => it.setDefaultView());
-  }
-
-  _createNoPoints() {
-    this._clearComponent(this._infoDestinationComponent);
-    this._clearComponent(this._sortComponent);
-    this._renderNoPointsComponent();
   }
 
   _clearComponent(component) {
