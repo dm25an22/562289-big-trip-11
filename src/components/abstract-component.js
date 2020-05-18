@@ -24,14 +24,6 @@ export default class AbstractComponent {
     }
   }
 
-  updateElement() {
-    if (this._element) {
-      this._element = null;
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
   removeElement() {
     this._element = null;
   }

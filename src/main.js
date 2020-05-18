@@ -1,4 +1,4 @@
-// import TripInfoComponent from "./components/trip-info";
+import TripInfoComponent from "./components/trip-info";
 import NavigationComponent from "./components/navigation";
 import TripController from "./controllers/trip-controller";
 import FilterController from "./controllers/filter-controller";
@@ -10,8 +10,8 @@ const pointsModel = new PointsModel();
 pointsModel.setPoints(mockData);
 
 const mainTrip = document.querySelector(`.trip-main`);
-// const tripInfoComponent = new TripInfoComponent();
-// render(mainTrip, tripInfoComponent, RenderPosition.AFTERBEGIN);
+const tripInfoComponent = new TripInfoComponent();
+render(mainTrip, tripInfoComponent, RenderPosition.AFTERBEGIN);
 
 const tripControls = mainTrip.querySelector(`.trip-controls`);
 const firstElement = tripControls.querySelector(`:first-child`);
@@ -20,7 +20,7 @@ render(firstElement, new NavigationComponent(), RenderPosition.AFTER);
 const filterController = new FilterController(tripControls, pointsModel);
 filterController.render();
 
-const tripController = new TripController(mainTrip, pointsModel, filterController);
+const tripController = new TripController(tripInfoComponent, pointsModel, filterController);
 tripController.render();
 
 document.querySelector(`.trip-main__event-add-btn`)

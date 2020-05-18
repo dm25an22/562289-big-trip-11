@@ -21,7 +21,7 @@ export const render = (container, component, place = `beforeend`) => {
     case RenderPosition.BEFOREEND:
       container.append(component.getElement());
       break;
-    
+
     case RenderPosition.BEFORE:
       container.before(component.getElement());
       break;

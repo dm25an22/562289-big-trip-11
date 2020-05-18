@@ -5,7 +5,8 @@ import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import "flatpickr/dist/themes/material_blue.css";
 
-const OFFER_ID_PREFIX = `event-offer-`;
+// const OFFER_ID_PREFIX = `event-offer-`;
+
 const ButtonNames = {
   DELETE: `Delete`,
   CANCEL: `Cancel`
@@ -241,8 +242,6 @@ export default class EventEdit extends AbstractSmartComponent {
     this._type = data.type;
     this._offers = data.offer;
     this._eventPrice = data.eventPrice;
-    // this._isFavorite = data.isFavorite;
-    // this._offers = JSON.parse(JSON.stringify(data.offer));
     this._destination = data.destination;
     this._photos = data.photos;
     this._description = data.description;
@@ -270,16 +269,13 @@ export default class EventEdit extends AbstractSmartComponent {
       photos: this._photos,
       eventPrice: this._eventPrice,
       isNew: this._isNew,
-      // isFavorite: this._isFavorite,
     });
   }
 
   getData() {
     const element = this.getElement();
     const formData = new FormData(element);
-    // for (let pair of formData.entries()) {
-    //   console.log(pair[0] + `, ` + pair[1]);
-    // }
+
     return parseData(formData);
   }
 
@@ -323,7 +319,6 @@ export default class EventEdit extends AbstractSmartComponent {
 
 
   rerender(focus = false) {
-    // console.log(this._isFavorite);
     super.rerender();
     this._applyFlatpickr();
 
@@ -337,21 +332,8 @@ export default class EventEdit extends AbstractSmartComponent {
   _subscribeOnEvents() {
     const element = this.getElement();
 
-    // const availableOffers = element.querySelector(`.event__available-offers`);
-    // if (availableOffers) {
-    //   availableOffers.addEventListener(`change`, (evt) => {
-    //     this._offers.map((it) => {
-    //       if (evt.target.name === OFFER_ID_PREFIX + it.title) {
-    //         it.isChecked = !it.isChecked;
-    //       }
-    //     });
-    //     this.rerender();
-    //   });
-    // }
-
     const eventPriceInput = element.querySelector(`#event-price-1`);
     if (eventPriceInput) {
-
       eventPriceInput.addEventListener(`input`, (evt) => {
         this._eventPrice = evt.target.value;
         this.rerender(true);
@@ -385,7 +367,6 @@ export default class EventEdit extends AbstractSmartComponent {
       });
 
     const eventDestinationIput = element.querySelector(`#event-destination-1`);
-
     eventDestinationIput.addEventListener(`change`, (evt) => {
       if (!Object.keys(cities).some((it) => it === evt.target.value)) {
         evt.target.value = ``;

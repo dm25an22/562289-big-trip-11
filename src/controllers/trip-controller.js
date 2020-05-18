@@ -5,7 +5,6 @@ import DayComponent from "../components/day";
 import InfoCostComponent from "../components/info-cost";
 import DayCounterComponent from "../components/day-counter";
 import PointController, {Mode, emptyPoint} from "./point-controller";
-import TripInfoComponent from "../components/trip-info";
 
 
 import {getDurationTravel} from "../date-helpers";
@@ -23,9 +22,9 @@ const renderPoint = (container, points, onDataChange, onViewChange) => {
 };
 
 export default class TripController {
-  constructor(mainTrip, pointsModel, filterController) {
+  constructor(tripInfoComponent, pointsModel, filterController) {
 
-    this._mainTrip = mainTrip;
+    this._tripInfoComponent = tripInfoComponent;
     this._pointsModel = pointsModel;
     this._filterController = filterController;
     this._pointControllers = [];
@@ -33,10 +32,11 @@ export default class TripController {
 
     this._tripEvents = document.querySelector(`.trip-events`);
     this._tripEventsFirstChild = this._tripEvents.querySelector(`:first-child`);
-    this._tripInfoComponent = null;
     this._noPointsComponent = new NoPointsComponent();
     this._infoDestinationComponent = null;
-    this._dayCounterComponent = null;
+    this._infoCostComponent = null;
+    this._dayCounterComponent = new DayCounterComponent();
+    this._dayControllers = [];
     this._sortComponent = new SortComponent();
     this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChangeHandler.bind(this));
     this._onDataChange = this._onDataChange.bind(this);
@@ -46,43 +46,34 @@ export default class TripController {
 
   render() {
     const points = this._pointsModel.getPoints();
+
     render(this._tripEvents, this._noPointsComponent, RenderPosition.BEFOREEND);
     this._noPointsComponent.hideElement();
 
+    render(this._tripEventsFirstChild, this._sortComponent, RenderPosition.AFTER);
+    this._sortComponent.hideElement();
+
+
+    render(this._tripEvents, this._dayCounterComponent, RenderPosition.BEFOREEND);
+
     if (!points.length) {
       this._noPointsComponent.showElement();
-      this._infoDestinationComponent.hideElement();
+
+      if (this._infoDestinationComponent) {
+        this._infoDestinationComponent.hideElement();
+      }
       return;
     }
-
-    render(this._tripEventsFirstChild, this._sortComponent, RenderPosition.AFTER);
 
     this._renderPoints(points);
   }
 
 
   _renderPoints(points, isSort = false) {
-    if (!this._tripInfoComponent) {
-      this._renderTripInfoComponent();
-    }
-
-    this._renderDayCounterComponent();
-
     const tripInfoContainer = this._tripInfoComponent.getElement();
     const dayContainer = this._dayCounterComponent.getElement();
 
     this._pointControllers = this._renderEvents(tripInfoContainer, dayContainer, points, this._onDataChange, this._onViewChange, isSort);
-  }
-
-
-  _renderDayCounterComponent() {
-    this._dayCounterComponent = new DayCounterComponent();
-    render(this._tripEvents, this._dayCounterComponent, RenderPosition.BEFOREEND);
-  }
-
-  _renderTripInfoComponent() {
-    this._tripInfoComponent = new TripInfoComponent();
-    render(this._mainTrip, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
   }
 
   _renderEvents(tripInfoContainer, dayContainer, points, onDataChange, onViewChange, isSort) {
@@ -90,6 +81,7 @@ export default class TripController {
 
     if (isSort) {
       const dayComponent = new DayComponent();
+      this._dayControllers.push(dayComponent);
       render(dayContainer, dayComponent, RenderPosition.BEFOREEND);
 
       const day = dayComponent.getElement().querySelector(`.trip-events__list`);
@@ -112,12 +104,14 @@ export default class TripController {
       const durationTravel = getDurationTravel(datesList);
       const totalPrice = getTotalPrice(points);
 
-      render(tripInfoContainer, new InfoCostComponent(totalPrice), RenderPosition.BEFOREEND);
+      this._infoCostComponent = new InfoCostComponent(totalPrice);
+      render(tripInfoContainer, this._infoCostComponent, RenderPosition.BEFOREEND);
       this._infoDestinationComponent = new InfoDestinationComponent(roadLine, durationTravel);
       render(tripInfoContainer, this._infoDestinationComponent, RenderPosition.AFTERBEGIN);
 
       datesList.forEach((date, i) => {
         const dayComponent = new DayComponent(date, i + 1);
+        this._dayControllers.push(dayComponent);
         render(dayContainer, dayComponent, RenderPosition.BEFOREEND);
         const day = dayComponent.getElement().querySelector(`.trip-events__list`);
 
@@ -178,7 +172,9 @@ export default class TripController {
     }
 
     if (!this._pointsModel.getPointsAll().length) {
-      this._clearComponent(this._infoDestinationComponent);
+      if (this._infoDestinationComponent) {
+        this._infoDestinationComponent.hideElement();
+      }
     } else {
       this._sortComponent.resetSort();
       this._filterController.resetFlter();
@@ -195,29 +191,30 @@ export default class TripController {
     this._pointControllers.forEach((it) => it.setDefaultView());
   }
 
-  _clearComponent(component) {
-    if (component) {
-      remove(component);
-      component = null;
-    }
-  }
-
-  _clearTripInfoContainer() {
-    if (this._tripInfoComponent) {
-      remove(this._tripInfoComponent);
-      this._tripInfoComponent = null;
-    }
-  }
-
   _removeEvents() {
     this._pointControllers.forEach((pointController) => pointController.destroy());
-    this._clearComponent(this._dayCounterComponent);
+    this._pointControllers = [];
 
-    this._clearTripInfoContainer();
+    this._dayControllers.forEach((it) => remove(it));
+    this._dayControllers = [];
+  }
+
+  _clearHeader() {
+    if (this._infoDestinationComponent) {
+      remove(this._infoDestinationComponent);
+      this._infoDestinationComponent = null;
+    }
+
+    if (this._infoCostComponent) {
+      remove(this._infoCostComponent);
+      this._infoCostComponent = null;
+    }
   }
 
   _updateTripEvents() {
     this._removeEvents();
+    this._clearHeader();
+
     this._renderPoints(this._pointsModel.getPoints());
   }
 
@@ -225,11 +222,11 @@ export default class TripController {
     const tripSortItemDay = document.querySelector(`.trip-sort__item--day`);
     const sortedPoints = getSortedPoints(typeSort, this._pointsModel.getPoints());
 
-    this._clearComponent(this._dayCounterComponent);
+    this._removeEvents();
 
     if (typeSort === SortType.EVENT) {
       tripSortItemDay.textContent = `Day`;
-      this._clearTripInfoContainer();
+      this._clearHeader();
       this._renderPoints(sortedPoints);
       return;
     }
@@ -241,7 +238,7 @@ export default class TripController {
     this._updateTripEvents();
 
     if (!this._pointsModel.getPoints().length) {
-      this._clearComponent(this._infoDestinationComponent);
+      this._infoDestinationComponent.hideElement();
     }
   }
 
