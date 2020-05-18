@@ -2,7 +2,7 @@ import {getRandomNumber, getRandomItem, getRandomBoolean} from "../utils/common"
 import {LABEL_IN, LABEL_TO} from "../consts";
 import moment from "moment";
 
-const QUANTITY_PINS = 16;
+const QUANTITY_PINS = 12;
 const LabelOfType = {
   'Taxi': LABEL_TO,
   'Bus': LABEL_TO,
@@ -109,7 +109,7 @@ const getRandomPhotos = (count) => {
 
 
 const getStart = () => {
-  const date = moment();
+  const date = moment(`2020-05-09`);
   date.set(`hour`, 8);
 
   date.add(getRandomNumber(0, 4), `d`);
@@ -154,6 +154,7 @@ const generatePoints = () => {
   const currentType = getRandomItem(typeEvents);
 
   return {
+    id: String(new Date() + Math.random()),
     type: currentType,
     destination: currentDestination,
     eventPrice: getRandomNumber(30, 140),

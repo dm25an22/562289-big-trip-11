@@ -2,11 +2,15 @@ import {MONTHS} from "./consts";
 import moment from "moment";
 
 const getDurationTravel = (data) => {
-  const startDay = moment(data[0]).get(`date`);
-  const startMonth = MONTHS[moment(data[0]).get(`month`)];
+  const dates = data.map((el) => moment(el));
+  const minDate = moment.min(dates);
+  const maxDate = moment.max(dates);
 
-  const endtDay = moment(data[data.length - 1]).get(`date`);
-  const endMonth = MONTHS[moment(data[data.length - 1]).get(`month`)];
+  const startDay = minDate.get(`date`);
+  const startMonth = MONTHS[minDate.get(`month`)];
+
+  const endtDay = maxDate.get(`date`);
+  const endMonth = MONTHS[maxDate.get(`month`)];
 
   return [startDay, startMonth, endtDay, endMonth];
 };
@@ -37,10 +41,11 @@ const getDurationTime = (start, end) => {
 
   const duration = moment.duration(b.diff(a));
 
+  const day = duration.get(`day`);
   const hours = duration.get(`hour`);
   const minutes = duration.get(`minutes`);
 
-  return `${hours > 0 ? `${hours}H` : ``} ${minutes}M`;
+  return `${day > 0 ? `${day}D` : ``} ${hours > 0 ? `${hours}H` : ``} ${minutes}M`;
 };
 
 const getDurationTimeInMinutes = (start, end) => {
