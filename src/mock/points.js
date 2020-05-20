@@ -4,16 +4,16 @@ import moment from "moment";
 
 const QUANTITY_PINS = 12;
 const LabelOfType = {
-  'Taxi': LABEL_TO,
-  'Bus': LABEL_TO,
-  'Train': LABEL_TO,
-  'Ship': LABEL_TO,
-  'Transport': LABEL_TO,
-  'Drive': LABEL_TO,
-  'Flight': LABEL_TO,
-  'Sightseeing': LABEL_IN,
-  'Restaurant': LABEL_IN,
-  'Check-in': LABEL_IN
+  'taxi': LABEL_TO,
+  'bus': LABEL_TO,
+  'train': LABEL_TO,
+  'ship': LABEL_TO,
+  'transport': LABEL_TO,
+  'drive': LABEL_TO,
+  'flight': LABEL_TO,
+  'sightseeing': LABEL_IN,
+  'restaurant': LABEL_IN,
+  'check-in': LABEL_IN
 };
 
 const typeEvents = Object.keys(LabelOfType);

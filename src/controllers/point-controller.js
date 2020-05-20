@@ -1,8 +1,9 @@
 import EventPointComponent from "../components/event-point";
 import EventEditComponent from "../components/event-edit";
 import {RenderPosition, render, replace, remove} from "../utils/render";
-import {getOffers} from "../mock/points";
+import {destinationModel, offerModel} from "../data";
 
+const OFFER_ID_PREFIX = `event-offer-`;
 
 export const Mode = {
   ADDING: `adding`,
@@ -11,16 +12,39 @@ export const Mode = {
 };
 
 export const emptyPoint = {
-  // id: String(new Date() + Math.random()),
   type: `Taxi`,
-  destination: ``,
-  eventPrice: 20,
-  offer: getOffers(`Taxi`),
+  destination: [],
+  eventPrice: ``,
+  offer: [],
   start: new Date(),
   end: new Date(),
   description: ``,
   photos: [],
   isFavorite: false
+};
+
+const parseData = (formData) => {
+  const eventDestinationName = formData.get(`event-destination`);
+  const eventDestination = destinationModel.getDestinationData().filter((it) => it.name === eventDestinationName)[0];
+
+  const eventType = formData.get(`event-type`);
+  const eventOffers = offerModel.getOffersData().filter((it) => it.type === eventType)[0].offers;
+  const offers = [];
+
+  eventOffers.forEach((it) => {
+    if (formData.get(`${OFFER_ID_PREFIX}${it.title}`) === `on`) {
+      offers.push(it);
+    }
+  });
+
+  return {
+    eventPrice: Number(formData.get(`event-price`)),
+    type: eventType,
+    destination: eventDestination,
+    offer: offers,
+    start: new Date(formData.get(`event-start-time`)),
+    end: new Date(formData.get(`event-end-time`)),
+  };
 };
 
 export default class PointController {
@@ -37,7 +61,6 @@ export default class PointController {
 
   render(point, mode, isNew) {
     this._mode = mode;
-
     const oldEventPoint = this._eventPoint;
     const oldEventPointEdit = this._eventPointEdit;
 
@@ -55,21 +78,19 @@ export default class PointController {
     });
 
     this._eventPointEdit.setSubmitHandler((evt) => {
-      const data = this._eventPointEdit.getData();
+      const formData = this._eventPointEdit.getData();
+      const data = parseData(formData);
+
       evt.preventDefault();
       this._onDataChange(this, point, Object.assign({}, point, {
-        id: String(new Date() + Math.random()),
         type: data.type,
         destination: data.destination,
         eventPrice: data.eventPrice,
         offer: data.offer,
         start: data.start,
         end: data.end,
-        description: data.description,
-        photos: data.photos,
         isFavorite: false
       }));
-
     });
 
     this._eventPointEdit.setClickHandler(() => {

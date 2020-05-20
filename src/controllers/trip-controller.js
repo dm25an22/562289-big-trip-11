@@ -4,7 +4,7 @@ import InfoDestinationComponent from "../components/info-destination";
 import DayComponent from "../components/day";
 import InfoCostComponent from "../components/info-cost";
 import DayCounterComponent from "../components/day-counter";
-import PointController, {Mode, emptyPoint} from "./point-controller";
+import PointController, {Mode, emptyPoint, getEmptyPoint} from "./point-controller";
 
 
 import {getDurationTravel} from "../date-helpers";
@@ -64,6 +64,8 @@ export default class TripController {
       }
       return;
     }
+
+    this._sortComponent.showElement();
 
     this._renderPoints(points);
   }
@@ -180,7 +182,6 @@ export default class TripController {
       this._filterController.resetFlter();
       this._updateTripEvents();
     }
-
     this._noPointsComponent.hideElement();
 
     this._createNewPoint = new PointController(this._dayCounterComponent.getElement(), this._onDataChange, this._onViewChange);
