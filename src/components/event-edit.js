@@ -1,11 +1,12 @@
-import {LabelOfType, getOffers, cities} from "../mock/points";
+import {LabelOfType} from "../consts";
 import AbstractSmartComponent from "./abstract-smart-component";
+import {firstLetterToUpper} from "../utils/common";
 import flatpickr from "flatpickr";
 
 import "flatpickr/dist/flatpickr.min.css";
 import "flatpickr/dist/themes/material_blue.css";
 
-// const OFFER_ID_PREFIX = `event-offer-`;
+const OFFER_ID_PREFIX = `event-offer-`;
 
 const ButtonNames = {
   DELETE: `Delete`,
@@ -13,44 +14,44 @@ const ButtonNames = {
 };
 
 
-export const renderTypeIcon = (type) => {
+export const renderTypeIconMurkup = (type) => {
   return (
     `<div class="event__type-list">
     <fieldset class="event__type-group">
       <legend class="visually-hidden">Transfer</legend>
 
       <div class="event__type-item">
-        <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi" ${type === `Taxi` ? `checked` : ``}>
+        <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi" ${type === `taxi` ? `checked` : ``}>
         <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
       </div>
 
       <div class="event__type-item">
-        <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus" ${type === `Bus` ? `checked` : ``}>
+        <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus" ${type === `bus` ? `checked` : ``}>
         <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
       </div>
 
       <div class="event__type-item">
-        <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train" ${type === `Train` ? `checked` : ``}>
+        <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train" ${type === `train` ? `checked` : ``}>
         <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
       </div>
 
       <div class="event__type-item">
-        <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship" ${type === `Ship` ? `checked` : ``}>
+        <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship" ${type === `ship` ? `checked` : ``}>
         <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
       </div>
 
       <div class="event__type-item">
-        <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport" ${type === `Transport` ? `checked` : ``}>
+        <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport" ${type === `transport` ? `checked` : ``}>
         <label class="event__type-label  event__type-label--transport" for="event-type-transport-1">Transport</label>
       </div>
 
       <div class="event__type-item">
-        <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive" ${type === `Drive` ? `checked` : ``}>
+        <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive" ${type === `drive` ? `checked` : ``}>
         <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
       </div>
 
       <div class="event__type-item">
-        <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" ${type === `Flight` ? `checked` : ``}>
+        <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" ${type === `flight` ? `checked` : ``}>
         <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
       </div>
     </fieldset>
@@ -59,17 +60,17 @@ export const renderTypeIcon = (type) => {
       <legend class="visually-hidden">Activity</legend>
 
       <div class="event__type-item">
-        <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in"  ${type === `Check-in` ? `checked` : ``}>
+        <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in"  ${type === `check-in` ? `checked` : ``}>
         <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
       </div>
 
       <div class="event__type-item">
-        <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing"  ${type === `Sightseeing` ? `checked` : ``}>
+        <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing"  ${type === `sightseeing` ? `checked` : ``}>
         <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
       </div>
 
       <div class="event__type-item">
-        <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant"  ${type === `Restaurant` ? `checked` : ``}>
+        <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant"  ${type === `restaurant` ? `checked` : ``}>
         <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
       </div>
     </fieldset>
@@ -77,12 +78,12 @@ export const renderTypeIcon = (type) => {
   );
 };
 
-export const renderOffersMurkup = (offers) => {
-  return offers.map((it) => {
+export const renderOffersMurkup = (typeOffers, offers) => {
+  return typeOffers.map((it) => {
     const {title, price} = it;
     return (
       `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${title}" type="checkbox" name="event-offer-${title}" ${it.isChecked ? `checked` : ``}>
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${title}" type="checkbox" name="event-offer-${title}" ${offers.some((offer) => offer.title === title) ? `checked` : ``}>
         <label class="event__offer-label" for="event-offer-${title}">
           <span class="event__offer-title">${title}</span>
           &plus;
@@ -93,6 +94,7 @@ export const renderOffersMurkup = (offers) => {
   }).join(`\n`);
 };
 
+
 export const renderImgMurkup = (photos) => {
   return photos.map((photo) => {
     return (
@@ -101,20 +103,20 @@ export const renderImgMurkup = (photos) => {
   }).join(`\n`);
 };
 
-const rendrDestination = () => {
-  return Object.keys(cities).map((city) => {
+const rendrDestinationMurkup = (destinationNames) => {
+  return destinationNames.map((city) => {
     return `<option value="${city}"></option>`;
   }).join(`\n`);
 };
 
 const createNewEventEditTemplate = (dataPoint, options = {}) => {
   const {isFavorite} = dataPoint;
-  const {type, offer, destination, description, photos, eventPrice, isNew} = options;
+  const {type, offer, availableOffers, destinationName, destinationNames, description, eventPrice, isNew, photos} = options;
 
   const imgMurkup = renderImgMurkup(photos);
-  const offerMurkup = renderOffersMurkup(offer);
-  const typeIcon = renderTypeIcon(type);
-  const destinationList = rendrDestination();
+  const offerMurkup = renderOffersMurkup(availableOffers, offer);
+  const typeIcon = renderTypeIconMurkup(type);
+  const destinationList = rendrDestinationMurkup(destinationNames);
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -122,7 +124,7 @@ const createNewEventEditTemplate = (dataPoint, options = {}) => {
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
             ${typeIcon}
@@ -130,9 +132,9 @@ const createNewEventEditTemplate = (dataPoint, options = {}) => {
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            ${type} ${LabelOfType[type]}
+            ${firstLetterToUpper(type)} ${LabelOfType[type]}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1" required>
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationName}" list="destination-list-1" required>
           <datalist id="destination-list-1">
             ${destinationList}
           </datalist>
@@ -176,7 +178,7 @@ const createNewEventEditTemplate = (dataPoint, options = {}) => {
       </button>` }
       </header>
 
-      ${offer.length ? `<section class="event__details">
+      ${availableOffers.length ? `<section class="event__details">
         <section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
@@ -210,31 +212,12 @@ const resetFlatpicer = (flatpick) => {
   }
 };
 
-const parseData = (formData) => {
-  const eventDestination = formData.get(`event-destination`);
-  const eventDescription = cities[eventDestination].description;
-  const eventPhotos = cities[eventDestination].photo;
-  const eventType = formData.get(`event-type`);
-  const eventTypeUpper = eventType[0].toUpperCase() + eventType.slice(1);
-  const eventOffers = getOffers(eventTypeUpper);
-
-  return {
-    eventPrice: Number(formData.get(`event-price`)),
-    type: eventTypeUpper,
-    destination: eventDestination,
-    offer: eventOffers,
-    start: new Date(formData.get(`event-start-time`)),
-    end: new Date(formData.get(`event-end-time`)),
-    description: eventDescription,
-    photos: eventPhotos,
-  };
-};
-
 
 export default class EventEdit extends AbstractSmartComponent {
-  constructor(data, isNew = false) {
+  constructor(data, destinationModel, offerModel, isNew = false) {
     super();
-
+    this._destinationModel = destinationModel;
+    this._offerModel = offerModel;
     this._data = data;
     this._isNew = isNew;
 
@@ -242,9 +225,9 @@ export default class EventEdit extends AbstractSmartComponent {
     this._type = data.type;
     this._offers = data.offer;
     this._eventPrice = data.eventPrice;
-    this._destination = data.destination;
-    this._photos = data.photos;
-    this._description = data.description;
+    this._destinationName = data.destination.name || ``;
+    this._photos = data.destination.pictures ? data.destination.pictures.map((it) => it.src) : [];
+    this._description = data.destination.description;
     this._start = data.start;
     this._end = data.end;
 
@@ -264,7 +247,9 @@ export default class EventEdit extends AbstractSmartComponent {
     return createNewEventEditTemplate(this._data, {
       type: this._type,
       offer: this._offers,
-      destination: this._destination,
+      destinationNames: this._destinationModel.getDestinationNames(),
+      availableOffers: this._getAvailableOffers(),
+      destinationName: this._destinationName,
       description: this._description,
       photos: this._photos,
       eventPrice: this._eventPrice,
@@ -274,9 +259,8 @@ export default class EventEdit extends AbstractSmartComponent {
 
   getData() {
     const element = this.getElement();
-    const formData = new FormData(element);
 
-    return parseData(formData);
+    return new FormData(element);
   }
 
   recoveryListeners() {
@@ -329,8 +313,29 @@ export default class EventEdit extends AbstractSmartComponent {
     }
   }
 
+  _getAvailableOffers() {
+    return this._offerModel.getOffersData().filter((it) => it.type === this._type)[0].offers;
+  }
+
   _subscribeOnEvents() {
     const element = this.getElement();
+
+    const offersContainer = element.querySelector(`.event__available-offers`);
+    if (offersContainer) {
+      offersContainer.addEventListener(`change`, (evt) => {
+        const isChecked = evt.target.checked;
+        const titleFromInput = evt.target.name.slice(OFFER_ID_PREFIX.length);
+        const avaibleOffers = this._getAvailableOffers();
+
+        if (isChecked) {
+          const addOffer = avaibleOffers.filter((it) => it.title === titleFromInput);
+          this._offers.push(addOffer[0]);
+        } else {
+          this._offers = this._offers.filter((it) => it.title !== titleFromInput);
+        }
+
+      });
+    }
 
     const eventPriceInput = element.querySelector(`#event-price-1`);
     if (eventPriceInput) {
@@ -353,24 +358,21 @@ export default class EventEdit extends AbstractSmartComponent {
 
     element.querySelector(`.event__type-list`)
       .addEventListener(`change`, (evt) => {
-        if (this._type.toLowerCase() === evt.target.value) {
+        if (this._type === evt.target.value) {
           return;
         }
         this._type = evt.target.value;
 
-        const firstLetter = this._type[0].toUpperCase();
-        this._type = firstLetter.concat(this._type.slice(1));
-
-        this._offers = getOffers(this._type);
+        this._offers = [];
 
         this.rerender();
       });
 
     const eventDestinationIput = element.querySelector(`#event-destination-1`);
     eventDestinationIput.addEventListener(`change`, (evt) => {
-      if (!Object.keys(cities).some((it) => it === evt.target.value)) {
+      if (!this._destinationModel.getDestinationNames().some((it) => it === evt.target.value)) {
         evt.target.value = ``;
-        this._destination = ``;
+        this._destinationName = ``;
         this._description = ``;
         this._photos = [];
         this.rerender();
@@ -378,10 +380,14 @@ export default class EventEdit extends AbstractSmartComponent {
     });
 
     eventDestinationIput.addEventListener(`input`, (evt) => {
-      if (Object.keys(cities).some((it) => it === evt.target.value)) {
-        this._destination = evt.target.value;
-        this._description = cities[this._destination].description;
-        this._photos = cities[this._destination].photo;
+      if (this._destinationModel.getDestinationNames().some((it) => it === evt.target.value)) {
+        this._destinationName = evt.target.value;
+
+        const destinationsAll = this._destinationModel.getDestinationData();
+
+        const destination = destinationsAll.filter((it) => it.name === this._destinationName);
+        this._description = destination[0].description;
+        this._photos = destination[0].pictures.map((it) => it.src);
 
         this.rerender();
       }
@@ -391,14 +397,13 @@ export default class EventEdit extends AbstractSmartComponent {
   }
 
   reset() {
-
     const data = this._data;
     this._eventPrice = data.eventPrice;
     this._type = data.type;
     this._offers = data.offer;
-    this._destination = data.destination;
-    this._photos = data.photos;
-    this._description = data.description;
+    this._destinationName = data.destination.name;
+    this._photos = data.destination.pictures.map((it) => it.src);
+    this._description = data.destination.description;
     this._start = data.start;
     this._end = data.end;
 

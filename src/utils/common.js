@@ -25,7 +25,6 @@ const getTotalPrice = (data) => {
 
   data.forEach((el) => {
     const arr = el.offer
-    .filter((element) => element.isChecked)
     .map((item) => item.price);
     if (arr.length) {
       sumPrice += arr.reduce((prev, curr) => prev + curr);
@@ -36,9 +35,10 @@ const getTotalPrice = (data) => {
 };
 
 const getRodLine = (data) => {
-  const destination = new Set(data.map((it) => it.destination));
+  const destination = new Set(data.map((it) => it.destination.name));
+  const destinationArr = [...destination];
 
-  return [...destination].join(` &mdash; `);
+  return destinationArr.length <= 3 ? destinationArr.join(` &mdash; `) : `${destinationArr[0]}  &mdash; ...  &mdash; ${destinationArr[destinationArr.length - 1]}`;
 };
 
 const getSortedPoints = (sortType, points) => {
@@ -67,11 +67,18 @@ const getSortedPoints = (sortType, points) => {
   return sortedPoints;
 };
 
+const firstLetterToUpper = (word) => {
+  const firstLetter = word[0].toUpperCase();
+  const result = firstLetter + word.slice(1);
+  return result;
+};
+
 export {
   getRandomNumber,
   getRandomItem,
   getTotalPrice,
   getRodLine,
   getRandomBoolean,
-  getSortedPoints
+  getSortedPoints,
+  firstLetterToUpper
 };

@@ -1,8 +1,9 @@
 import EventPointComponent from "../components/event-point";
 import EventEditComponent from "../components/event-edit";
 import {RenderPosition, render, replace, remove} from "../utils/render";
-import {getOffers} from "../mock/points";
+import PointModel from "../models/point-model";
 
+const OFFER_ID_PREFIX = `event-offer-`;
 
 export const Mode = {
   ADDING: `adding`,
@@ -11,11 +12,10 @@ export const Mode = {
 };
 
 export const emptyPoint = {
-  // id: String(new Date() + Math.random()),
-  type: `Taxi`,
-  destination: ``,
-  eventPrice: 20,
-  offer: getOffers(`Taxi`),
+  type: `taxi`,
+  destination: [],
+  eventPrice: ``,
+  offer: [],
   start: new Date(),
   end: new Date(),
   description: ``,
@@ -23,9 +23,12 @@ export const emptyPoint = {
   isFavorite: false
 };
 
+
 export default class PointController {
-  constructor(container, onDataChange, onViewChange) {
+  constructor(container, onDataChange, onViewChange, destinationModel, offerModel) {
     this._container = container;
+    this._destinationModel = destinationModel;
+    this._offerModel = offerModel;
     this._eventPoint = null;
     this._eventPointEdit = null;
     this._onDataChange = onDataChange;
@@ -37,12 +40,12 @@ export default class PointController {
 
   render(point, mode, isNew) {
     this._mode = mode;
-
     const oldEventPoint = this._eventPoint;
     const oldEventPointEdit = this._eventPointEdit;
 
-    this._eventPoint = new EventPointComponent(point);
-    this._eventPointEdit = new EventEditComponent(point, isNew);
+    this._eventPoint = new EventPointComponent(point, this._destinationModel, this._offerModel);
+    this._eventPointEdit = new EventEditComponent(point, this._destinationModel, this._offerModel, isNew);
+
 
     this._eventPoint.setClickHandler(() => {
       this._replacePointToEdit();
@@ -55,21 +58,11 @@ export default class PointController {
     });
 
     this._eventPointEdit.setSubmitHandler((evt) => {
-      const data = this._eventPointEdit.getData();
-      evt.preventDefault();
-      this._onDataChange(this, point, Object.assign({}, point, {
-        id: String(new Date() + Math.random()),
-        type: data.type,
-        destination: data.destination,
-        eventPrice: data.eventPrice,
-        offer: data.offer,
-        start: data.start,
-        end: data.end,
-        description: data.description,
-        photos: data.photos,
-        isFavorite: false
-      }));
+      const formData = this._eventPointEdit.getData();
+      const data = this._parseData(formData);
 
+      evt.preventDefault();
+      this._onDataChange(this, point, data);
     });
 
     this._eventPointEdit.setClickHandler(() => {
@@ -78,10 +71,11 @@ export default class PointController {
     });
 
     this._eventPointEdit.setClickOnStarHandler(() => {
-      this._onDataChange(this, point, Object.assign({}, point, {
-        isFavorite: !point.isFavorite,
-      }), true);
+      const newPoint = PointModel.clone(point);
+      newPoint.isFavorite = !newPoint.isFavorite;
+      this._onDataChange(this, point, newPoint, true);
     });
+
 
     switch (mode) {
       case Mode.DEFAULT:
@@ -109,6 +103,33 @@ export default class PointController {
     if (this._mode !== Mode.DEFAULT) {
       this._replaceEditToPoint();
     }
+  }
+
+  _parseData(formData) {
+    const eventDestinationName = formData.get(`event-destination`);
+    const eventDestination = this._destinationModel.getDestinationData().filter((it) => it.name === eventDestinationName)[0];
+
+    const eventType = formData.get(`event-type`);
+    const eventOffers = this._offerModel.getOffersData().filter((it) => it.type === eventType)[0].offers;
+    const offers = [];
+
+    eventOffers.forEach((it) => {
+      if (formData.get(`${OFFER_ID_PREFIX}${it.title}`) === `on`) {
+        offers.push(it);
+      }
+    });
+
+    const isFavorite = formData.get(`event-favorite`) === `on` ? true : false;
+
+    return new PointModel({
+      "base_price": Number(formData.get(`event-price`)),
+      "type": eventType,
+      "destination": eventDestination,
+      "offers": offers,
+      "date_from": new Date(formData.get(`event-start-time`)),
+      "date_to": new Date(formData.get(`event-end-time`)),
+      "is_favorite": isFavorite
+    });
   }
 
   destroy() {
