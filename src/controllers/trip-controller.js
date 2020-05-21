@@ -4,7 +4,8 @@ import InfoDestinationComponent from "../components/info-destination";
 import DayComponent from "../components/day";
 import InfoCostComponent from "../components/info-cost";
 import DayCounterComponent from "../components/day-counter";
-import PointController, {Mode, emptyPoint, getEmptyPoint} from "./point-controller";
+import PointController, {Mode, emptyPoint} from "./point-controller";
+import {HIDDEN_CLASS} from "../consts";
 
 
 import {getDurationTravel} from "../date-helpers";
@@ -12,9 +13,9 @@ import {getRodLine, getTotalPrice, getSortedPoints} from "../utils/common";
 import {RenderPosition, render, remove} from "../utils/render";
 import moment from "moment";
 
-const renderPoint = (container, points, onDataChange, onViewChange) => {
+const renderPoint = (container, points, onDataChange, onViewChange, destinationModel, offerModel) => {
   return points.map((it) => {
-    const pointController = new PointController(container, onDataChange, onViewChange);
+    const pointController = new PointController(container, onDataChange, onViewChange, destinationModel, offerModel);
     pointController.render(it, Mode.DEFAULT);
 
     return pointController;
@@ -22,10 +23,13 @@ const renderPoint = (container, points, onDataChange, onViewChange) => {
 };
 
 export default class TripController {
-  constructor(tripInfoComponent, pointsModel, filterController) {
+  constructor(api, tripInfoComponent, pointsModel, destinationModel, offerModel, filterController) {
 
+    this._api = api;
     this._tripInfoComponent = tripInfoComponent;
     this._pointsModel = pointsModel;
+    this._destinationModel = destinationModel;
+    this._offerModel = offerModel;
     this._filterController = filterController;
     this._pointControllers = [];
     this._createNewPoint = null;
@@ -94,7 +98,7 @@ export default class TripController {
       dayInfo.innerHTML = ``;
       tripSortItemDay.textContent = ``;
 
-      const newPoint = renderPoint(day, points, onDataChange, onViewChange);
+      const newPoint = renderPoint(day, points, onDataChange, onViewChange, this._destinationModel, this._offerModel);
       pointControllers = pointControllers.concat(newPoint);
 
     } else {
@@ -119,7 +123,7 @@ export default class TripController {
 
         const pointsFilter = points.filter((el) => moment(el.start).format(`YYYY-MM-DD`) === date);
 
-        const newPoint = renderPoint(day, pointsFilter, onDataChange, onViewChange);
+        const newPoint = renderPoint(day, pointsFilter, onDataChange, onViewChange, this._destinationModel, this._offerModel);
         pointControllers = pointControllers.concat(newPoint);
       });
     }
@@ -134,7 +138,6 @@ export default class TripController {
         pointController.destroy();
         this._updateTripEvents();
       } else {
-
         this._pointsModel.addPoint(newData);
         pointController.destroy();
         this._updateTripEvents();
@@ -143,15 +146,19 @@ export default class TripController {
       this._pointsModel.removePoint(oldData.id);
       this._updateTripEvents();
     } else {
-      const isSuccess = this._pointsModel.updatePoints(oldData.id, newData);
+      this._api.updataPoints(oldData.id, newData)
+        .then((pointData) => {
+          const isSuccess = this._pointsModel.updatePoints(oldData.id, pointData);
 
-      if (isSuccess) {
-        if (isFavotite) {
-          pointController.render(newData, Mode.EDIT);
-        } else {
-          this._updateTripEvents();
-        }
-      }
+          if (isSuccess) {
+            if (isFavotite) {
+              pointController.render(pointData, Mode.EDIT);
+            } else {
+              this._updateTripEvents();
+            }
+          }
+        });
+
     }
 
     this._isExistPoints();
@@ -180,11 +187,13 @@ export default class TripController {
     } else {
       this._sortComponent.resetSort();
       this._filterController.resetFlter();
-      this._updateTripEvents();
     }
-    this._noPointsComponent.hideElement();
 
-    this._createNewPoint = new PointController(this._dayCounterComponent.getElement(), this._onDataChange, this._onViewChange);
+    if (!this._noPointsComponent.getElement().classList.contains(HIDDEN_CLASS)) {
+      this._noPointsComponent.hideElement();
+    }
+
+    this._createNewPoint = new PointController(this._dayCounterComponent.getElement(), this._onDataChange, this._onViewChange, this._destinationModel, this._offerModel);
     this._createNewPoint.render(emptyPoint, Mode.ADDING, true);
   }
 

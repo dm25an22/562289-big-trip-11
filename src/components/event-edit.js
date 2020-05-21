@@ -1,6 +1,5 @@
-import {LabelOfType} from "../mock/points";
+import {LabelOfType} from "../consts";
 import AbstractSmartComponent from "./abstract-smart-component";
-import {destinationModel, offerModel} from "../data";
 import {firstLetterToUpper} from "../utils/common";
 import flatpickr from "flatpickr";
 
@@ -15,7 +14,7 @@ const ButtonNames = {
 };
 
 
-export const renderTypeIcon = (type) => {
+export const renderTypeIconMurkup = (type) => {
   return (
     `<div class="event__type-list">
     <fieldset class="event__type-group">
@@ -104,7 +103,7 @@ export const renderImgMurkup = (photos) => {
   }).join(`\n`);
 };
 
-const rendrDestination = (destinationNames) => {
+const rendrDestinationMurkup = (destinationNames) => {
   return destinationNames.map((city) => {
     return `<option value="${city}"></option>`;
   }).join(`\n`);
@@ -112,17 +111,12 @@ const rendrDestination = (destinationNames) => {
 
 const createNewEventEditTemplate = (dataPoint, options = {}) => {
   const {isFavorite} = dataPoint;
-  const {type, offer, destination, description, eventPrice, isNew, photos} = options;
-
-  const destinationNames = destinationModel.getDestinationNames();
-
-  const currentOffers = offerModel.getOffersData().filter((it) => it.type === type);
-  const typeOffers = currentOffers[0].offers;
+  const {type, offer, availableOffers, destinationName, destinationNames, description, eventPrice, isNew, photos} = options;
 
   const imgMurkup = renderImgMurkup(photos);
-  const offerMurkup = renderOffersMurkup(typeOffers, offer);
-  const typeIcon = renderTypeIcon(type);
-  const destinationList = rendrDestination(destinationNames);
+  const offerMurkup = renderOffersMurkup(availableOffers, offer);
+  const typeIcon = renderTypeIconMurkup(type);
+  const destinationList = rendrDestinationMurkup(destinationNames);
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -140,7 +134,7 @@ const createNewEventEditTemplate = (dataPoint, options = {}) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${firstLetterToUpper(type)} ${LabelOfType[type]}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1" required>
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationName}" list="destination-list-1" required>
           <datalist id="destination-list-1">
             ${destinationList}
           </datalist>
@@ -184,7 +178,7 @@ const createNewEventEditTemplate = (dataPoint, options = {}) => {
       </button>` }
       </header>
 
-      ${typeOffers.length ? `<section class="event__details">
+      ${availableOffers.length ? `<section class="event__details">
         <section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
@@ -220,9 +214,10 @@ const resetFlatpicer = (flatpick) => {
 
 
 export default class EventEdit extends AbstractSmartComponent {
-  constructor(data, isNew = false) {
+  constructor(data, destinationModel, offerModel, isNew = false) {
     super();
-
+    this._destinationModel = destinationModel;
+    this._offerModel = offerModel;
     this._data = data;
     this._isNew = isNew;
 
@@ -230,7 +225,7 @@ export default class EventEdit extends AbstractSmartComponent {
     this._type = data.type;
     this._offers = data.offer;
     this._eventPrice = data.eventPrice;
-    this._destination = data.destination.name;
+    this._destinationName = data.destination.name || ``;
     this._photos = data.destination.pictures ? data.destination.pictures.map((it) => it.src) : [];
     this._description = data.destination.description;
     this._start = data.start;
@@ -252,7 +247,9 @@ export default class EventEdit extends AbstractSmartComponent {
     return createNewEventEditTemplate(this._data, {
       type: this._type,
       offer: this._offers,
-      destination: this._destination,
+      destinationNames: this._destinationModel.getDestinationNames(),
+      availableOffers: this._getAvailableOffers(),
+      destinationName: this._destinationName,
       description: this._description,
       photos: this._photos,
       eventPrice: this._eventPrice,
@@ -316,6 +313,10 @@ export default class EventEdit extends AbstractSmartComponent {
     }
   }
 
+  _getAvailableOffers() {
+    return this._offerModel.getOffersData().filter((it) => it.type === this._type)[0].offers;
+  }
+
   _subscribeOnEvents() {
     const element = this.getElement();
 
@@ -324,7 +325,7 @@ export default class EventEdit extends AbstractSmartComponent {
       offersContainer.addEventListener(`change`, (evt) => {
         const isChecked = evt.target.checked;
         const titleFromInput = evt.target.name.slice(OFFER_ID_PREFIX.length);
-        const avaibleOffers = offerModel.getOffersData().filter((it) => it.type === this._type)[0].offers;
+        const avaibleOffers = this._getAvailableOffers();
 
         if (isChecked) {
           const addOffer = avaibleOffers.filter((it) => it.title === titleFromInput);
@@ -369,9 +370,9 @@ export default class EventEdit extends AbstractSmartComponent {
 
     const eventDestinationIput = element.querySelector(`#event-destination-1`);
     eventDestinationIput.addEventListener(`change`, (evt) => {
-      if (!destinationModel.getDestinationNames().some((it) => it === evt.target.value)) {
+      if (!this._destinationModel.getDestinationNames().some((it) => it === evt.target.value)) {
         evt.target.value = ``;
-        this._destination = ``;
+        this._destinationName = ``;
         this._description = ``;
         this._photos = [];
         this.rerender();
@@ -379,12 +380,12 @@ export default class EventEdit extends AbstractSmartComponent {
     });
 
     eventDestinationIput.addEventListener(`input`, (evt) => {
-      if (destinationModel.getDestinationNames().some((it) => it === evt.target.value)) {
-        this._destination = evt.target.value;
+      if (this._destinationModel.getDestinationNames().some((it) => it === evt.target.value)) {
+        this._destinationName = evt.target.value;
 
-        const destinationsAll = destinationModel.getDestinationData();
+        const destinationsAll = this._destinationModel.getDestinationData();
 
-        const destination = destinationsAll.filter((it) => it.name === this._destination);
+        const destination = destinationsAll.filter((it) => it.name === this._destinationName);
         this._description = destination[0].description;
         this._photos = destination[0].pictures.map((it) => it.src);
 
@@ -400,7 +401,7 @@ export default class EventEdit extends AbstractSmartComponent {
     this._eventPrice = data.eventPrice;
     this._type = data.type;
     this._offers = data.offer;
-    this._destination = data.destination.name;
+    this._destinationName = data.destination.name;
     this._photos = data.destination.pictures.map((it) => it.src);
     this._description = data.destination.description;
     this._start = data.start;

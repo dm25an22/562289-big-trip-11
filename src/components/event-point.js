@@ -1,5 +1,5 @@
 import {getDurationTime, getStartEndEvent} from "../date-helpers";
-import {LabelOfType} from "../mock/points";
+import {LabelOfType} from "../consts";
 import {firstLetterToUpper} from "../utils/common";
 import AbstractComponent from "./abstract-component";
 
@@ -56,9 +56,10 @@ const createEventPointTemplate = (dataPoint) => {
 };
 
 export default class EventPoint extends AbstractComponent {
-  constructor(data) {
+  constructor(data, destinationModel, offerModel) {
     super();
-
+    this._destinationModel = destinationModel;
+    this._offerModel = offerModel;
     this._data = data;
   }
 
