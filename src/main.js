@@ -10,8 +10,8 @@ import NoPointsComponent from "./components/no-points";
 import {RenderPosition, render, remove} from "./utils/render";
 
 const AUTHORIZATION = `Basic jhkjhio879jkhj=`;
-
-const api = new API(AUTHORIZATION);
+const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
+const api = new API(END_POINT, AUTHORIZATION);
 const pointsModel = new PointsModel();
 const destinationModel = new Destination();
 const offerModel = new Offer();
