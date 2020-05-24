@@ -64,9 +64,12 @@ export default class PointController {
     this._eventPointEdit.setSubmitHandler((evt) => {
       const formData = this._eventPointEdit.getData();
       const data = this._parseData(formData);
+      this._eventPointEdit.borderEdit(false);
       this._eventPointEdit.setData({
         saveButtonText: `Saving…`,
       });
+      this._eventPointEdit.blockForm();
+
       evt.preventDefault();
       this._onDataChange(this, point, data);
     });
@@ -79,6 +82,7 @@ export default class PointController {
     this._eventPointEdit.setClickOnStarHandler(() => {
       const newPoint = PointModel.clone(point);
       newPoint.isFavorite = !newPoint.isFavorite;
+      this._eventPointEdit.borderEdit(false);
       this._onDataChange(this, point, newPoint, true);
     });
 
@@ -115,6 +119,7 @@ export default class PointController {
         saveButtonText: `Save`,
         deleteButtonText: `Delete`
       });
+      this._eventPointEdit.borderEdit(true);
     }, SHAKE_ANIMATION_TIMEOUT);
   }
 

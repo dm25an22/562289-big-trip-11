@@ -14,7 +14,6 @@ const DefaultData = {
   cancelButtonText: `Cancel`
 };
 
-
 export const renderTypeIconMurkup = (type) => {
   return (
     `<div class="event__type-list">
@@ -267,6 +266,17 @@ export default class EventEdit extends AbstractSmartComponent {
     const element = this.getElement();
 
     return new FormData(element);
+  }
+
+  blockForm() {
+    const element = this.getElement();
+    Array.from(element.elements).forEach((it) => {
+      it.disabled = true;
+    });
+  }
+
+  borderEdit(boolean) {
+    this.getElement().style.border = `${boolean ? `1px solid red` : ``}`;
   }
 
   recoveryListeners() {
