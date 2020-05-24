@@ -8,11 +8,11 @@ import "flatpickr/dist/themes/material_blue.css";
 
 const OFFER_ID_PREFIX = `event-offer-`;
 
-const ButtonNames = {
-  DELETE: `Delete`,
-  CANCEL: `Cancel`
+const DefaultData = {
+  saveButtonText: `Save`,
+  deleteButtonText: `Delete`,
+  cancelButtonText: `Cancel`
 };
-
 
 export const renderTypeIconMurkup = (type) => {
   return (
@@ -111,12 +111,15 @@ const rendrDestinationMurkup = (destinationNames) => {
 
 const createNewEventEditTemplate = (dataPoint, options = {}) => {
   const {isFavorite} = dataPoint;
-  const {type, offer, availableOffers, destinationName, destinationNames, description, eventPrice, isNew, photos} = options;
+  const {type, offer, availableOffers, destinationName, destinationNames, description, eventPrice, isNew, photos, externalData} = options;
 
   const imgMurkup = renderImgMurkup(photos);
   const offerMurkup = renderOffersMurkup(availableOffers, offer);
   const typeIcon = renderTypeIconMurkup(type);
   const destinationList = rendrDestinationMurkup(destinationNames);
+
+  const saveButtonText = externalData.saveButtonText;
+  const deleteButtonText = externalData.deleteButtonText;
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -160,9 +163,9 @@ const createNewEventEditTemplate = (dataPoint, options = {}) => {
           <input class="event__input  event__input--price" id="event-price-1" type="text" pattern = "[0-9]{0,5}" name="event-price" value="${eventPrice}">
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit">${saveButtonText}</button>
        
-        <button class="event__reset-btn" type="reset">${isNew ? ButtonNames.CANCEL : ButtonNames.DELETE }</button>
+        <button class="event__reset-btn" type="reset">${isNew ? DefaultData.cancelButtonText : deleteButtonText }</button>
 
         ${isNew ? `` :
       `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
@@ -231,6 +234,7 @@ export default class EventEdit extends AbstractSmartComponent {
     this._start = data.start;
     this._end = data.end;
 
+    this._externalData = DefaultData;
     this._flatpickrStart = null;
     this._flatpickrEnd = null;
     this._startDate = null;
@@ -254,6 +258,7 @@ export default class EventEdit extends AbstractSmartComponent {
       photos: this._photos,
       eventPrice: this._eventPrice,
       isNew: this._isNew,
+      externalData: this._externalData
     });
   }
 
@@ -261,6 +266,17 @@ export default class EventEdit extends AbstractSmartComponent {
     const element = this.getElement();
 
     return new FormData(element);
+  }
+
+  blockForm() {
+    const element = this.getElement();
+    Array.from(element.elements).forEach((it) => {
+      it.disabled = true;
+    });
+  }
+
+  borderEdit(boolean) {
+    this.getElement().style.border = `${boolean ? `1px solid red` : ``}`;
   }
 
   recoveryListeners() {
@@ -299,6 +315,11 @@ export default class EventEdit extends AbstractSmartComponent {
       defaultDate: this._end,
       minDate: this._start,
     }));
+  }
+
+  setData(data) {
+    this._externalData = Object.assign({}, DefaultData, data);
+    this.rerender();
   }
 
 

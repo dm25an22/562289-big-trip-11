@@ -4,6 +4,7 @@ import {RenderPosition, render, replace, remove} from "../utils/render";
 import PointModel from "../models/point-model";
 
 const OFFER_ID_PREFIX = `event-offer-`;
+const SHAKE_ANIMATION_TIMEOUT = 600;
 
 export const Mode = {
   ADDING: `adding`,
@@ -54,12 +55,20 @@ export default class PointController {
 
     this._eventPointEdit.setClickOnDeleteHandler((evt) => {
       evt.preventDefault();
+      this._eventPointEdit.setData({
+        deleteButtonText: `Deleting…`
+      });
       this._onDataChange(this, point, null);
     });
 
     this._eventPointEdit.setSubmitHandler((evt) => {
       const formData = this._eventPointEdit.getData();
       const data = this._parseData(formData);
+      this._eventPointEdit.borderEdit(false);
+      this._eventPointEdit.setData({
+        saveButtonText: `Saving…`,
+      });
+      this._eventPointEdit.blockForm();
 
       evt.preventDefault();
       this._onDataChange(this, point, data);
@@ -73,6 +82,7 @@ export default class PointController {
     this._eventPointEdit.setClickOnStarHandler(() => {
       const newPoint = PointModel.clone(point);
       newPoint.isFavorite = !newPoint.isFavorite;
+      this._eventPointEdit.borderEdit(false);
       this._onDataChange(this, point, newPoint, true);
     });
 
@@ -97,6 +107,20 @@ export default class PointController {
         replace(this._eventPoint, oldEventPoint);
         replace(this._eventPointEdit, oldEventPointEdit);
     }
+  }
+
+  shake() {
+    this._eventPointEdit.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+
+    setTimeout(() => {
+      this._eventPointEdit.getElement().style.animation = ``;
+
+      this._eventPointEdit.setData({
+        saveButtonText: `Save`,
+        deleteButtonText: `Delete`
+      });
+      this._eventPointEdit.borderEdit(true);
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 
   setDefaultView() {
