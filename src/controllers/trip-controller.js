@@ -74,6 +74,14 @@ export default class TripController {
     this._renderPoints(points);
   }
 
+  hide() {
+    this._tripEvents.classList.add(HIDDEN_CLASS);
+  }
+
+  show() {
+    this._tripEvents.classList.remove(HIDDEN_CLASS);
+  }
+
 
   _renderPoints(points, isSort = false) {
     const tripInfoContainer = this._tripInfoComponent.getElement();
@@ -143,6 +151,7 @@ export default class TripController {
             this._pointsModel.addPoint(pointModel);
             pointController.destroy();
             this._updateTripEvents();
+            this._isExistPoints();
           })
           .catch(() => {
             pointController.shake();
@@ -153,6 +162,7 @@ export default class TripController {
         .then(() => {
           this._pointsModel.removePoint(oldData.id);
           this._updateTripEvents();
+          this._isExistPoints();
         })
         .catch(() => {
           pointController.shake();
@@ -175,8 +185,6 @@ export default class TripController {
         });
 
     }
-
-    this._isExistPoints();
   }
 
   _isExistPoints() {

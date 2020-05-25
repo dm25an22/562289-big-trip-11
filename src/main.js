@@ -8,6 +8,8 @@ import Destination from "./models/destination-model";
 import Offer from "./models/offer-model";
 import NoPointsComponent from "./components/no-points";
 import {RenderPosition, render, remove} from "./utils/render";
+import Statistics from "./statistic";
+import {navItem} from "./components/navigation";
 
 const AUTHORIZATION = `Basic jhkjhio879jkhj=`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
@@ -16,19 +18,24 @@ const pointsModel = new PointsModel();
 const destinationModel = new Destination();
 const offerModel = new Offer();
 
+const main = document.querySelector(`.page-body__page-main`);
 const mainTrip = document.querySelector(`.trip-main`);
 const tripControls = mainTrip.querySelector(`.trip-controls`);
 const firstElement = tripControls.querySelector(`:first-child`);
 const tripEvents = document.querySelector(`.trip-events`);
+const pageBodyContainer = main.querySelector(`.page-body__container`);
 const tripInfoComponent = new TripInfoComponent();
 const filterController = new FilterController(tripControls, pointsModel);
 const tripController = new TripController(api, tripInfoComponent, pointsModel, destinationModel, offerModel, filterController);
 const loadingComponent = new NoPointsComponent(true);
+const statisticsComponent = new Statistics();
+const navigationComponent = new NavigationComponent();
 
 render(tripEvents, loadingComponent, RenderPosition.BEFOREEND);
 render(mainTrip, tripInfoComponent, RenderPosition.AFTERBEGIN);
-render(firstElement, new NavigationComponent(), RenderPosition.AFTER);
-
+render(firstElement, navigationComponent, RenderPosition.AFTER);
+render(pageBodyContainer, statisticsComponent, RenderPosition.BEFOREEND);
+statisticsComponent.hideElement();
 filterController.render();
 
 Promise.all([
@@ -51,4 +58,20 @@ document.querySelector(`.trip-main__event-add-btn`)
   .addEventListener(`click`, () => {
     tripController.createNewPoint();
   });
+
+navigationComponent.setOnChange((navType) => {
+  navigationComponent.setActiveClass(navType);
+
+  switch (navType) {
+    case navItem.TABLE:
+      statisticsComponent.hideElement();
+      tripController.show();
+      break;
+
+    case navItem.Stats:
+      statisticsComponent.showElement();
+      tripController.hide();
+      break;
+  }
+});
 
