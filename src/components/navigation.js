@@ -27,8 +27,15 @@ export default class Navigation extends AbstractComponent {
 
   }
 
+  resetActiveClass() {
+    this.getElement().querySelector(`.${activeClass}`).classList.remove(activeClass);
+    const defaultElement = this.getElement().querySelector(`#${navItem.TABLE}`);
+    defaultElement.classList.add(activeClass);
+    defaultElement.checked = true;
+  }
+
   setActiveClass(id) {
-    this.getElement().querySelector(`.${activeClass}`).classList.remove(activeClass);   
+    this.getElement().querySelector(`.${activeClass}`).classList.remove(activeClass);
     this.getElement().querySelector(`#${id}`).classList.add(activeClass);
   }
 

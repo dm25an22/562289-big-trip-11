@@ -50,7 +50,6 @@ export default class PointController {
 
     this._eventPoint.setClickHandler(() => {
       this._replacePointToEdit();
-
     });
 
     this._eventPointEdit.setClickOnDeleteHandler((evt) => {
@@ -99,7 +98,7 @@ export default class PointController {
         break;
 
       case Mode.ADDING:
-        document.addEventListener(`keydown`, this._onEscPress);
+        window.addEventListener(`keydown`, this._onEscPress);
         render(this._container, this._eventPointEdit, RenderPosition.BEFORE);
         break;
 
@@ -131,7 +130,8 @@ export default class PointController {
 
   _parseData(formData) {
     const eventDestinationName = formData.get(`event-destination`);
-    const eventDestination = this._destinationModel.getDestinationData().filter((it) => it.name === eventDestinationName)[0];
+    const eventDestination = this._destinationModel.getDestinationData()
+      .filter((it) => it.name === eventDestinationName)[0];
 
     const eventType = formData.get(`event-type`);
     const eventOffers = this._offerModel.getOffersData().filter((it) => it.type === eventType)[0].offers;
@@ -159,13 +159,13 @@ export default class PointController {
   destroy() {
     remove(this._eventPoint);
     remove(this._eventPointEdit);
-    document.removeEventListener(`keydown`, this._onEscPress);
+    window.removeEventListener(`keydown`, this._onEscPress);
   }
 
   _replacePointToEdit() {
     this._onViewChange();
     replace(this._eventPointEdit, this._eventPoint);
-    document.addEventListener(`keydown`, this._onEscPress);
+    window.addEventListener(`keydown`, this._onEscPress);
     this._mode = Mode.EDIT;
   }
 
@@ -181,11 +181,12 @@ export default class PointController {
 
       if (this._mode === Mode.ADDING) {
         this._onDataChange(this, emptyPoint, null);
+        return;
       }
 
       this._eventPointEdit.reset();
       this._replaceEditToPoint();
-      document.removeEventListener(`keydown`, this._onEscPress);
+      window.removeEventListener(`keydown`, this._onEscPress);
     }
   }
 

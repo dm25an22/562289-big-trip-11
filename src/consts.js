@@ -6,6 +6,8 @@ const FilterType = {
   Past: `past`
 };
 
+const TRIP_TRANSFERS = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`];
+
 const LABEL_IN = `in`;
 const LABEL_TO = `to`;
 
@@ -24,4 +26,4 @@ const LabelOfType = {
 
 const HIDDEN_CLASS = `visually-hidden`;
 
-export {MONTHS, LABEL_TO, LABEL_IN, FilterType, HIDDEN_CLASS, LabelOfType};
+export {MONTHS, LABEL_TO, LABEL_IN, FilterType, HIDDEN_CLASS, LabelOfType, TRIP_TRANSFERS};

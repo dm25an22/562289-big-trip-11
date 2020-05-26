@@ -94,11 +94,11 @@ export const renderOffersMurkup = (typeOffers, offers) => {
   }).join(`\n`);
 };
 
-
 export const renderImgMurkup = (photos) => {
   return photos.map((photo) => {
+    const {src, description} = photo;
     return (
-      `<img class="event__photo" src="${photo}" alt="Event photo">`
+      `<img class="event__photo" src="${src}" alt="${description}">`
     );
   }).join(`\n`);
 };
@@ -229,7 +229,7 @@ export default class EventEdit extends AbstractSmartComponent {
     this._offers = data.offer;
     this._eventPrice = data.eventPrice;
     this._destinationName = data.destination.name || ``;
-    this._photos = data.destination.pictures ? data.destination.pictures.map((it) => it.src) : [];
+    this._photos = data.destination.pictures ? data.destination.pictures.map((it) => it) : [];
     this._description = data.destination.description;
     this._start = data.start;
     this._end = data.end;
@@ -323,15 +323,9 @@ export default class EventEdit extends AbstractSmartComponent {
   }
 
 
-  rerender(focus = false) {
+  rerender() {
     super.rerender();
     this._applyFlatpickr();
-
-    if (focus) {
-      const eventPriceInput = this.getElement().querySelector(`#event-price-1`);
-      eventPriceInput.focus();
-      eventPriceInput.selectionStart = eventPriceInput.value.length;
-    }
   }
 
   _getAvailableOffers() {
@@ -360,9 +354,13 @@ export default class EventEdit extends AbstractSmartComponent {
 
     const eventPriceInput = element.querySelector(`#event-price-1`);
     if (eventPriceInput) {
-      eventPriceInput.addEventListener(`input`, (evt) => {
+
+      if (!eventPriceInput.checkValidity()) {
+        eventPriceInput.setCustomValidity(`weqe`);
+      }
+      eventPriceInput.addEventListener(`change`, (evt) => {
         this._eventPrice = evt.target.value;
-        this.rerender(true);
+        this.rerender();
       });
     }
 
@@ -390,14 +388,17 @@ export default class EventEdit extends AbstractSmartComponent {
       });
 
     const eventDestinationIput = element.querySelector(`#event-destination-1`);
+
     eventDestinationIput.addEventListener(`change`, (evt) => {
       if (!this._destinationModel.getDestinationNames().some((it) => it === evt.target.value)) {
         evt.target.value = ``;
         this._destinationName = ``;
         this._description = ``;
         this._photos = [];
+
         this.rerender();
       }
+
     });
 
     eventDestinationIput.addEventListener(`input`, (evt) => {
@@ -406,13 +407,12 @@ export default class EventEdit extends AbstractSmartComponent {
 
         const destinationsAll = this._destinationModel.getDestinationData();
 
-        const destination = destinationsAll.filter((it) => it.name === this._destinationName);
-        this._description = destination[0].description;
-        this._photos = destination[0].pictures.map((it) => it.src);
+        const destination = destinationsAll.filter((it) => it.name === this._destinationName)[0];
+        this._description = destination.description;
+        this._photos = destination.pictures.map((it) => it);
 
         this.rerender();
       }
-
     });
 
   }
@@ -423,7 +423,7 @@ export default class EventEdit extends AbstractSmartComponent {
     this._type = data.type;
     this._offers = data.offer;
     this._destinationName = data.destination.name;
-    this._photos = data.destination.pictures.map((it) => it.src);
+    this._photos = data.destination.pictures.map((it) => it);
     this._description = data.destination.description;
     this._start = data.start;
     this._end = data.end;

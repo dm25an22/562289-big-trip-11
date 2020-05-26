@@ -55,11 +55,18 @@ const getDurationTimeInMinutes = (start, end) => {
   return moment(b).diff(a, `minutes`);
 };
 
+const getConvertTimeSpent = (minute) => {
+  const hour = moment.duration(minute, `minute`).asHours().toFixed(0);
+
+  return hour;
+};
+
 export {
   getDurationTravel,
   getStartEndEvent,
   getMonth,
   getDurationTime,
   getDay,
-  getDurationTimeInMinutes
+  getDurationTimeInMinutes,
+  getConvertTimeSpent
 };

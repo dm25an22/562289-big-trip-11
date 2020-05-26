@@ -8,7 +8,7 @@ import Destination from "./models/destination-model";
 import Offer from "./models/offer-model";
 import NoPointsComponent from "./components/no-points";
 import {RenderPosition, render, remove} from "./utils/render";
-import Statistics from "./statistic";
+import Statistics from "./components/statistic";
 import {navItem} from "./components/navigation";
 
 const AUTHORIZATION = `Basic jhkjhio879jkhj=`;
@@ -24,11 +24,13 @@ const tripControls = mainTrip.querySelector(`.trip-controls`);
 const firstElement = tripControls.querySelector(`:first-child`);
 const tripEvents = document.querySelector(`.trip-events`);
 const pageBodyContainer = main.querySelector(`.page-body__container`);
+const buttonAdd = document.querySelector(`.trip-main__event-add-btn`);
+
 const tripInfoComponent = new TripInfoComponent();
 const filterController = new FilterController(tripControls, pointsModel);
-const tripController = new TripController(api, tripInfoComponent, pointsModel, destinationModel, offerModel, filterController);
+const tripController = new TripController(api, tripInfoComponent, pointsModel, destinationModel, offerModel);
 const loadingComponent = new NoPointsComponent(true);
-const statisticsComponent = new Statistics();
+const statisticsComponent = new Statistics(pointsModel);
 const navigationComponent = new NavigationComponent();
 
 render(tripEvents, loadingComponent, RenderPosition.BEFOREEND);
@@ -54,10 +56,16 @@ Promise.all([
     loadingComponent.getElement().innerHTML = `An error occurred.Try reloading the page`;
   });
 
-document.querySelector(`.trip-main__event-add-btn`)
-  .addEventListener(`click`, () => {
-    tripController.createNewPoint();
-  });
+
+buttonAdd.addEventListener(`click`, (evt) => {
+  evt.preventDefault();
+  filterController.resetFlter();
+  navigationComponent.resetActiveClass();
+  statisticsComponent.hideElement();
+  tripController.show();
+  filterController.show();
+  tripController.createNewPoint();
+});
 
 navigationComponent.setOnChange((navType) => {
   navigationComponent.setActiveClass(navType);
@@ -66,11 +74,15 @@ navigationComponent.setOnChange((navType) => {
     case navItem.TABLE:
       statisticsComponent.hideElement();
       tripController.show();
+      filterController.show();
       break;
 
     case navItem.Stats:
       statisticsComponent.showElement();
       tripController.hide();
+      tripController.removeCreateNewPoint();
+      filterController.resetFlter();
+      filterController.hide();
       break;
   }
 });

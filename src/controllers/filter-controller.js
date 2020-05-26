@@ -21,6 +21,21 @@ export default class FilterController {
     document.querySelector(`#filter-everything`).checked = true;
   }
 
+  hide() {
+    this._filterComponent.hideElement();
+  }
+
+  show() {
+    this._filterComponent.showElement();
+  }
+
+  blockFilters(boolean) {
+    const filters = document.querySelectorAll(`.trip-filters__filter-input`);
+    Array.from(filters).forEach((it) => {
+      it.disabled = boolean;
+    });
+  }
+
   _onFilterChangeHandler(filterName) {
     this._pointsModel.setFilter(filterName);
   }
