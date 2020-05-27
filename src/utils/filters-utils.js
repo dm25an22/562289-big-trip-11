@@ -1,4 +1,4 @@
-import {FilterType} from "../consts";
+import {FilterType} from "../enum";
 
 const getFuturePoints = (points) => {
   return points.filter((point) => point.start > new Date());

@@ -7,7 +7,6 @@ const createInfoCostTemplate = (cost) => {
     </p>`
   );
 };
-
 export default class InfoCost extends AbstractComponent {
   constructor(cost) {
     super();

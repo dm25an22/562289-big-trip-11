@@ -1,33 +1,9 @@
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import AbstractSmartComponent from "./abstract-smart-component";
-import {TRIP_TRANSFERS} from "../consts";
+import {TRIP_TRANSFERS, MINUTES_IN_HOUR} from "../consts";
 import {getDurationTimeInMinutes, getConvertTimeSpent} from "../date-helpers";
-
-const TypeIconList = {
-  'taxi': `🚕`,
-  'bus': `🚌`,
-  'train': `🚂`,
-  'flight': `✈️`,
-  'check-in': `🏤`,
-  'sightseeing': `🏛️`,
-  'restaurant': `🍴`,
-  'ship': `🛳️`,
-  'transport': `🚊`,
-  'drive': `🚗`
-};
-
-const Title = {
-  MONEY: `MONEY`,
-  TRANSPORT: `TRANSPORT`,
-  TIME_SPENT: `TIME SPENT`
-};
-
-const Symbol = {
-  EURO: `€`,
-  COUNT: `x`,
-  HOUR: `H`
-};
+import {Symbol, TypeIconList, Title} from "../enum";
 
 const renderChart = (ctx, typeData, valueData, symbol, title) => {
   return new Chart(ctx, {
@@ -171,18 +147,18 @@ export default class Statistic extends AbstractSmartComponent {
 
   _getMoneyData(typeData, points) {
     const moneyData = typeData.map((currentType) => {
-      const arr = points.filter((el) => el.type === currentType);
+      const similarTypes = points.filter((el) => el.type === currentType);
 
-      if (arr.length > 1) {
+      if (similarTypes.length > 1) {
         return {
           type: currentType,
-          cost: arr.map((it) => it.eventPrice).reduce((prev, curr) => prev + curr)
+          cost: similarTypes.map((it) => it.eventPrice).reduce((prev, curr) => prev + curr)
         };
 
       } else {
         return {
           type: currentType,
-          cost: arr[0].eventPrice,
+          cost: similarTypes[0].eventPrice,
         };
       }
     });
@@ -196,10 +172,10 @@ export default class Statistic extends AbstractSmartComponent {
     });
 
     const transportData = transferTypes.map((it) => {
-      const arr = points.filter((el) => el.type === it);
+      const similarTypes = points.filter((el) => el.type === it);
       return {
         type: it,
-        count: arr.length
+        count: similarTypes.length
       };
     });
 
@@ -208,23 +184,23 @@ export default class Statistic extends AbstractSmartComponent {
 
   _getTimeSpentData(typeData, points) {
     const timeSpent = typeData.map((it) => {
-      const arr = points.filter((el) => el.type === it)
+      const similarTypes = points.filter((el) => el.type === it)
         .map((obj) => getDurationTimeInMinutes(obj.start, obj.end));
 
-      if (arr.length > 1) {
+      if (similarTypes.length > 1) {
         return {
           type: it,
-          duration: arr.reduce((prev, curr) => prev + curr)
+          duration: similarTypes.reduce((prev, curr) => prev + curr)
         };
       } else {
         return {
           type: it,
-          duration: arr[0]
+          duration: similarTypes[0]
         };
       }
     });
 
-    const sortData = timeSpent.filter((it) => it.duration > 60)
+    const sortData = timeSpent.filter((it) => it.duration > MINUTES_IN_HOUR)
       .sort((a, b) => b.duration - a.duration);
 
     return sortData;

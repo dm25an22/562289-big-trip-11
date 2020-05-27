@@ -1,18 +1,11 @@
-import {LabelOfType} from "../consts";
+import {LabelOfType, DefaultData} from "../enum";
 import AbstractSmartComponent from "./abstract-smart-component";
 import {firstLetterToUpper} from "../utils/common";
+import {OFFER_ID_PREFIX} from "../consts";
 import flatpickr from "flatpickr";
 
 import "flatpickr/dist/flatpickr.min.css";
 import "flatpickr/dist/themes/material_blue.css";
-
-const OFFER_ID_PREFIX = `event-offer-`;
-
-const DefaultData = {
-  saveButtonText: `Save`,
-  deleteButtonText: `Delete`,
-  cancelButtonText: `Cancel`
-};
 
 export const renderTypeIconMurkup = (type) => {
   return (
@@ -111,10 +104,10 @@ const rendrDestinationMurkup = (destinationNames) => {
 
 const createNewEventEditTemplate = (dataPoint, options = {}) => {
   const {isFavorite} = dataPoint;
-  const {type, offer, availableOffers, destinationName, destinationNames, description, eventPrice, isNew, photos, externalData} = options;
+  const {type, offers, availableOffers, destinationName, destinationNames, description, eventPrice, isNew, photos, externalData} = options;
 
   const imgMurkup = renderImgMurkup(photos);
-  const offerMurkup = renderOffersMurkup(availableOffers, offer);
+  const offerMurkup = renderOffersMurkup(availableOffers, offers);
   const typeIcon = renderTypeIconMurkup(type);
   const destinationList = rendrDestinationMurkup(destinationNames);
 
@@ -240,7 +233,7 @@ export default class EventEdit extends AbstractSmartComponent {
     this._startDate = null;
 
     this._setSubmitHandler = null;
-    this._setClickHandler = null;
+    this._setClickOnRollupBtnHandler = null;
     this._setClickOnStarHandler = null;
     this._setClickOnDeleteHandler = null;
     this._applyFlatpickr();
@@ -250,7 +243,7 @@ export default class EventEdit extends AbstractSmartComponent {
   getTemplate() {
     return createNewEventEditTemplate(this._data, {
       type: this._type,
-      offer: this._offers,
+      offers: this._offers,
       destinationNames: this._destinationModel.getDestinationNames(),
       availableOffers: this._getAvailableOffers(),
       destinationName: this._destinationName,
@@ -264,7 +257,6 @@ export default class EventEdit extends AbstractSmartComponent {
 
   getData() {
     const element = this.getElement();
-
     return new FormData(element);
   }
 
@@ -281,7 +273,7 @@ export default class EventEdit extends AbstractSmartComponent {
 
   recoveryListeners() {
     this.setSubmitHandler(this._setSubmitHandler);
-    this.setClickHandler(this._setClickHandler);
+    this.setClickOnRollupBtnHandler(this._setClickOnRollupBtnHandler);
     this.setClickOnStarHandler(this._setClickOnStarHandler);
     this.setClickOnDeleteHandler(this._setClickOnDeleteHandler);
     this._subscribeOnEvents();
@@ -304,10 +296,7 @@ export default class EventEdit extends AbstractSmartComponent {
       [time]: true,
     };
 
-    const startDate = this._start;
-
     this._flatpickrStart = flatpickr(evtStartTime, Object.assign({}, option, {
-      minDate: startDate,
       defaultDate: this._start,
     }));
 
@@ -354,10 +343,6 @@ export default class EventEdit extends AbstractSmartComponent {
 
     const eventPriceInput = element.querySelector(`#event-price-1`);
     if (eventPriceInput) {
-
-      if (!eventPriceInput.checkValidity()) {
-        eventPriceInput.setCustomValidity(`weqe`);
-      }
       eventPriceInput.addEventListener(`change`, (evt) => {
         this._eventPrice = evt.target.value;
         this.rerender();
@@ -381,9 +366,7 @@ export default class EventEdit extends AbstractSmartComponent {
           return;
         }
         this._type = evt.target.value;
-
         this._offers = [];
-
         this.rerender();
       });
 
@@ -398,13 +381,11 @@ export default class EventEdit extends AbstractSmartComponent {
 
         this.rerender();
       }
-
     });
 
     eventDestinationIput.addEventListener(`input`, (evt) => {
       if (this._destinationModel.getDestinationNames().some((it) => it === evt.target.value)) {
         this._destinationName = evt.target.value;
-
         const destinationsAll = this._destinationModel.getDestinationData();
 
         const destination = destinationsAll.filter((it) => it.name === this._destinationName)[0];
@@ -441,11 +422,11 @@ export default class EventEdit extends AbstractSmartComponent {
     this._setSubmitHandler = handler;
   }
 
-  setClickHandler(handler) {
+  setClickOnRollupBtnHandler(handler) {
     const btnRollup = this.getElement().querySelector(`.event__rollup-btn`);
     if (btnRollup) {
       btnRollup.addEventListener(`click`, handler);
-      this._setClickHandler = handler;
+      this._setClickOnRollupBtnHandler = handler;
     }
   }
 

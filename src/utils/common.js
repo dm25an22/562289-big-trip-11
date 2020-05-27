@@ -1,22 +1,7 @@
 import {getDurationTimeInMinutes} from "../date-helpers";
 import {SortType} from "../components/sort";
 
-const getRandomNumber = (min, max) => {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
-
-const getRandomItem = (arr) => {
-  return arr[getRandomNumber(0, arr.length - 1)];
-};
-
-const getRandomBoolean = () => {
-  return Math.random() > 0.5;
-};
-
-const getTotalPrice = (data) => {
+export const getTotalPrice = (data) => {
   let sumPrice = 0;
 
   if (data.length) {
@@ -34,14 +19,15 @@ const getTotalPrice = (data) => {
   return sumPrice;
 };
 
-const getRodLine = (data) => {
-  const destination = new Set(data.map((it) => it.destination.name));
-  const destinationArr = [...destination];
+export const getRodLine = (data) => {
+  const dataClone = [...data];
+  dataClone.sort((a, b) => a.start - b.start);
+  const destination = dataClone.map((it) => it.destination.name);
 
-  return destinationArr.length <= 3 ? destinationArr.join(` &mdash; `) : `${destinationArr[0]}  &mdash; ...  &mdash; ${destinationArr[destinationArr.length - 1]}`;
+  return destination.length <= 3 ? destination.join(` &mdash; `) : `${destination[0]}  &mdash; ...  &mdash; ${destination[destination.length - 1]}`;
 };
 
-const getSortedPoints = (sortType, points) => {
+export const getSortedPoints = (sortType, points) => {
   const copyPoints = [...points];
   let sortedPoints = [];
 
@@ -67,18 +53,9 @@ const getSortedPoints = (sortType, points) => {
   return sortedPoints;
 };
 
-const firstLetterToUpper = (word) => {
+export const firstLetterToUpper = (word) => {
   const firstLetter = word[0].toUpperCase();
   const result = firstLetter + word.slice(1);
   return result;
 };
 
-export {
-  getRandomNumber,
-  getRandomItem,
-  getTotalPrice,
-  getRodLine,
-  getRandomBoolean,
-  getSortedPoints,
-  firstLetterToUpper
-};

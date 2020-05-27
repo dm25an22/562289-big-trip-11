@@ -6,7 +6,6 @@ const createTripInfo = () => {
     </section>`
   );
 };
-
 export default class TripInfo extends AbstractComponent {
   constructor(cost) {
     super();

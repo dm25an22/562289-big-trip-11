@@ -1,4 +1,5 @@
 import AbstractComponent from "./abstract-component";
+import {FILTER_ID_PREFIX} from "../consts";
 
 const createFilterTemplate = () => {
   return (
@@ -22,8 +23,6 @@ const createFilterTemplate = () => {
     </form>`
   );
 };
-
-const FILTER_ID_PREFIX = `filter-`;
 
 const getFilterId = (id) => {
   return id.substring(FILTER_ID_PREFIX.length);

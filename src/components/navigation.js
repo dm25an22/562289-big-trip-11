@@ -1,17 +1,13 @@
 import AbstractComponent from "./abstract-component";
-
-export const navItem = {
-  TABLE: `table`,
-  Stats: `stats`
-};
+import {NavItem} from "../enum";
 
 const activeClass = `trip-tabs__btn--active`;
 
 const createNavTemplate = () => {
   return (
     `<nav class="trip-controls__trip-tabs  trip-tabs">
-      <a id="${navItem.TABLE}" class="trip-tabs__btn  trip-tabs__btn--active" href="#">Table</a>
-      <a id="${navItem.Stats}" class="trip-tabs__btn" href="#">Stats</a>
+      <a id="${NavItem.TABLE}" class="trip-tabs__btn  trip-tabs__btn--active" href="#">Table</a>
+      <a id="${NavItem.STATS}" class="trip-tabs__btn" href="#">Stats</a>
     </nav>`
   );
 };
@@ -29,7 +25,7 @@ export default class Navigation extends AbstractComponent {
 
   resetActiveClass() {
     this.getElement().querySelector(`.${activeClass}`).classList.remove(activeClass);
-    const defaultElement = this.getElement().querySelector(`#${navItem.TABLE}`);
+    const defaultElement = this.getElement().querySelector(`#${NavItem.TABLE}`);
     defaultElement.classList.add(activeClass);
     defaultElement.checked = true;
   }

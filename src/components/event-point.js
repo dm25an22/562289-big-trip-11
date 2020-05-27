@@ -1,5 +1,5 @@
 import {getDurationTime, getStartEndEvent} from "../date-helpers";
-import {LabelOfType} from "../consts";
+import {LabelOfType} from "../enum";
 import {firstLetterToUpper} from "../utils/common";
 import AbstractComponent from "./abstract-component";
 
@@ -20,7 +20,6 @@ const createEventPointTemplate = (dataPoint) => {
   const [startTime, endTime] = getStartEndEvent(start, end);
   const duration = getDurationTime(start, end);
   const destinationName = destination.name;
-
 
   return (
     `<li class="trip-events__item">
@@ -56,10 +55,8 @@ const createEventPointTemplate = (dataPoint) => {
 };
 
 export default class EventPoint extends AbstractComponent {
-  constructor(data, destinationModel, offerModel) {
+  constructor(data) {
     super();
-    this._destinationModel = destinationModel;
-    this._offerModel = offerModel;
     this._data = data;
   }
 
@@ -67,7 +64,7 @@ export default class EventPoint extends AbstractComponent {
     return createEventPointTemplate(this._data);
   }
 
-  setClickHandler(handler) {
+  setClickOnRollupBtnHandler(handler) {
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
   }
 

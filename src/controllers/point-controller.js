@@ -1,16 +1,9 @@
 import EventPointComponent from "../components/event-point";
 import EventEditComponent from "../components/event-edit";
-import {RenderPosition, render, replace, remove} from "../utils/render";
+import {render, replace, remove} from "../utils/render";
 import PointModel from "../models/point-model";
-
-const OFFER_ID_PREFIX = `event-offer-`;
-const SHAKE_ANIMATION_TIMEOUT = 600;
-
-export const Mode = {
-  ADDING: `adding`,
-  DEFAULT: `default`,
-  EDIT: `edit`
-};
+import {SHAKE_ANIMATION_TIMEOUT, OFFER_ID_PREFIX} from "../consts";
+import {BottonTextOnLoad, Mode, RenderPosition} from "../enum";
 
 export const emptyPoint = {
   type: `taxi`,
@@ -23,17 +16,16 @@ export const emptyPoint = {
   photos: [],
   isFavorite: false
 };
-
-
 export default class PointController {
   constructor(container, onDataChange, onViewChange, destinationModel, offerModel) {
     this._container = container;
     this._destinationModel = destinationModel;
     this._offerModel = offerModel;
+    this._mode = Mode.DEFAULT;
+
     this._eventPoint = null;
     this._eventPointEdit = null;
     this._onDataChange = onDataChange;
-    this._mode = Mode.DEFAULT;
     this._onViewChange = onViewChange;
 
     this._onEscPress = this._onEscPress.bind(this);
@@ -44,18 +36,17 @@ export default class PointController {
     const oldEventPoint = this._eventPoint;
     const oldEventPointEdit = this._eventPointEdit;
 
-    this._eventPoint = new EventPointComponent(point, this._destinationModel, this._offerModel);
+    this._eventPoint = new EventPointComponent(point);
     this._eventPointEdit = new EventEditComponent(point, this._destinationModel, this._offerModel, isNew);
 
-
-    this._eventPoint.setClickHandler(() => {
+    this._eventPoint.setClickOnRollupBtnHandler(() => {
       this._replacePointToEdit();
     });
 
     this._eventPointEdit.setClickOnDeleteHandler((evt) => {
       evt.preventDefault();
       this._eventPointEdit.setData({
-        deleteButtonText: `Deleting…`
+        deleteButtonText: BottonTextOnLoad.Deleting
       });
       this._onDataChange(this, point, null);
     });
@@ -65,7 +56,7 @@ export default class PointController {
       const data = this._parseData(formData);
       this._eventPointEdit.borderEdit(false);
       this._eventPointEdit.setData({
-        saveButtonText: `Saving…`,
+        saveButtonText: BottonTextOnLoad.Saving
       });
       this._eventPointEdit.blockForm();
 
@@ -73,7 +64,7 @@ export default class PointController {
       this._onDataChange(this, point, data);
     });
 
-    this._eventPointEdit.setClickHandler(() => {
+    this._eventPointEdit.setClickOnRollupBtnHandler(() => {
       this._eventPointEdit.reset();
       this._replaceEditToPoint();
     });
@@ -189,6 +180,5 @@ export default class PointController {
       window.removeEventListener(`keydown`, this._onEscPress);
     }
   }
-
 
 }

@@ -1,7 +1,7 @@
 import {MONTHS} from "./consts";
 import moment from "moment";
 
-const getDurationTravel = (data) => {
+export const getDurationTravel = (data) => {
   const dates = data.map((el) => moment(el));
   const minDate = moment.min(dates);
   const maxDate = moment.max(dates);
@@ -15,27 +15,27 @@ const getDurationTravel = (data) => {
   return [startDay, startMonth, endtDay, endMonth];
 };
 
-const getStartEndEvent = (start, end) => {
+export const getStartEndEvent = (start, end) => {
   const startTime = moment(start).format(`HH:mm`);
   const endTime = moment(end).format(`HH:mm`);
 
   return [startTime, endTime];
 };
 
-const getMonth = (date) => {
+export const getMonth = (date) => {
   const monthIndex = moment(date).get(`month`);
 
   return MONTHS[monthIndex];
 };
 
-const getDay = (date) => {
+export const getDay = (date) => {
   const day = moment(date).get(`date`);
 
   return day;
 };
 
 
-const getDurationTime = (start, end) => {
+export const getDurationTime = (start, end) => {
   const a = moment(start);
   const b = moment(end);
 
@@ -48,25 +48,16 @@ const getDurationTime = (start, end) => {
   return `${day > 0 ? `${day}D` : ``} ${hours > 0 ? `${hours}H` : ``} ${minutes}M`;
 };
 
-const getDurationTimeInMinutes = (start, end) => {
+export const getDurationTimeInMinutes = (start, end) => {
   const a = moment(start);
   const b = moment(end);
 
   return moment(b).diff(a, `minutes`);
 };
 
-const getConvertTimeSpent = (minute) => {
+export const getConvertTimeSpent = (minute) => {
   const hour = moment.duration(minute, `minute`).asHours().toFixed(0);
 
   return hour;
 };
 
-export {
-  getDurationTravel,
-  getStartEndEvent,
-  getMonth,
-  getDurationTime,
-  getDay,
-  getDurationTimeInMinutes,
-  getConvertTimeSpent
-};

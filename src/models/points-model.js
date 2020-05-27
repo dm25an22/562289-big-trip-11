@@ -1,5 +1,5 @@
 import {getPoitsByFilter} from "../utils/filters-utils";
-import {FilterType} from "../consts";
+import {FilterType} from "../enum";
 
 export default class Points {
   constructor() {

@@ -1,9 +1,4 @@
-export const RenderPosition = {
-  AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`,
-  BEFORE: `before`,
-  AFTER: `after`
-};
+import {RenderPosition} from "../enum";
 
 export const createElement = (template) => {
   const newElement = document.createElement(`div`);

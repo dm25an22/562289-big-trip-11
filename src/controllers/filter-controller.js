@@ -1,7 +1,6 @@
-import {RenderPosition, render} from "../utils/render";
+import {render} from "../utils/render";
 import FilterComponent from "../components/filter";
-import {FilterType} from "../consts";
-
+import {FilterType, RenderPosition} from "../enum";
 
 export default class FilterController {
   constructor(container, pointsModel) {

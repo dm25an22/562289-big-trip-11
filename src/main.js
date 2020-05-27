@@ -7,9 +7,9 @@ import PointsModel from "./models/points-model";
 import Destination from "./models/destination-model";
 import Offer from "./models/offer-model";
 import NoPointsComponent from "./components/no-points";
-import {RenderPosition, render, remove} from "./utils/render";
+import {render, remove} from "./utils/render";
 import Statistics from "./components/statistic";
-import {navItem} from "./components/navigation";
+import {NavItem, RenderPosition} from "./enum";
 
 const AUTHORIZATION = `Basic jhkjhio879jkhj=`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
@@ -52,8 +52,8 @@ Promise.all([
     remove(loadingComponent);
     tripController.render();
   })
-  .catch(() => {
-    loadingComponent.getElement().innerHTML = `An error occurred.Try reloading the page`;
+  .catch((err) => {
+    loadingComponent.getElement().innerHTML = `${err}`;
   });
 
 
@@ -71,13 +71,13 @@ navigationComponent.setOnChange((navType) => {
   navigationComponent.setActiveClass(navType);
 
   switch (navType) {
-    case navItem.TABLE:
+    case NavItem.TABLE:
       statisticsComponent.hideElement();
       tripController.show();
       filterController.show();
       break;
 
-    case navItem.Stats:
+    case NavItem.STATS:
       statisticsComponent.showElement();
       tripController.hide();
       tripController.removeCreateNewPoint();

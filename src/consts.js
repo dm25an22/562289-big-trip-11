@@ -1,29 +1,11 @@
-const MONTHS = [`Jan`, `Feb`, `Mar`, `Apr`, `May`, `Jun`, `Jul`, `Aug`, `Sep`, `Oct`, `Nov`, `Dec`];
+export const MONTHS = [`Jan`, `Feb`, `Mar`, `Apr`, `May`, `Jun`, `Jul`, `Aug`, `Sep`, `Oct`, `Nov`, `Dec`];
 
-const FilterType = {
-  Everything: `everything`,
-  Future: `future`,
-  Past: `past`
-};
+export const TRIP_TRANSFERS = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`];
+export const LABEL_IN = `in`;
+export const LABEL_TO = `to`;
+export const HIDDEN_CLASS = `visually-hidden`;
+export const OFFER_ID_PREFIX = `event-offer-`;
+export const FILTER_ID_PREFIX = `filter-`;
+export const SHAKE_ANIMATION_TIMEOUT = 600;
+export const MINUTES_IN_HOUR = 60;
 
-const TRIP_TRANSFERS = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`];
-
-const LABEL_IN = `in`;
-const LABEL_TO = `to`;
-
-const LabelOfType = {
-  'taxi': LABEL_TO,
-  'bus': LABEL_TO,
-  'train': LABEL_TO,
-  'ship': LABEL_TO,
-  'transport': LABEL_TO,
-  'drive': LABEL_TO,
-  'flight': LABEL_TO,
-  'sightseeing': LABEL_IN,
-  'restaurant': LABEL_IN,
-  'check-in': LABEL_IN
-};
-
-const HIDDEN_CLASS = `visually-hidden`;
-
-export {MONTHS, LABEL_TO, LABEL_IN, FilterType, HIDDEN_CLASS, LabelOfType, TRIP_TRANSFERS};
