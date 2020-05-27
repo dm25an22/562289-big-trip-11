@@ -1,4 +1,4 @@
-import {getPoitsByFilter} from "../utils/filters-utils";
+import {getPointsByFilter} from "../utils/filters-utils";
 import {FilterType} from "../enum";
 
 export default class Points {
@@ -9,7 +9,7 @@ export default class Points {
   }
 
   getPoints() {
-    return getPoitsByFilter(this._points, this._activeFilter);
+    return getPointsByFilter(this._points, this._activeFilter);
   }
 
   getPointsAll() {
@@ -44,6 +44,26 @@ export default class Points {
     this._points = [].concat(this._points.slice(0, index), newPoint, this._points.slice(index + 1));
 
     return true;
+  }
+  getActiveFilter() {
+    return this._activeFilter;
+  }
+
+  blockFilterButton() {
+    const filterPast = document.querySelector(`#filter-past`);
+    const filterFuture = document.querySelector(`#filter-future`);
+
+    if (!getPointsByFilter(this._points, FilterType.PAST).length) {
+      filterPast.disabled = true;
+    } else {
+      filterPast.disabled = false;
+    }
+
+    if (!getPointsByFilter(this._points, FilterType.FUTURE).length) {
+      filterFuture.disabled = true;
+    } else {
+      filterFuture.disabled = false;
+    }
   }
 
   setFilter(filterName) {

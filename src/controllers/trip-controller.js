@@ -260,6 +260,7 @@ export default class TripController {
     this._removeEvents();
     this._clearHeader();
     this._renderWithSortType(this._sortComponent.getCurrentSortType());
+    this._pointsModel.blockFilterButton();
   }
 
   _onSortTypeChangeHandler(typeSort) {

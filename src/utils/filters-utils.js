@@ -8,7 +8,7 @@ const getPastPoints = (points) => {
   return points.filter((point) => point.end < new Date());
 };
 
-export const getPoitsByFilter = (allPoints, filterName) => {
+export const getPointsByFilter = (allPoints, filterName) => {
   switch (filterName) {
     case FilterType.EVERYTHING:
       return allPoints;

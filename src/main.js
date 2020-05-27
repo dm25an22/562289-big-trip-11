@@ -9,7 +9,7 @@ import Offer from "./models/offer-model";
 import NoPointsComponent from "./components/no-points";
 import {render, remove} from "./utils/render";
 import Statistics from "./components/statistic";
-import {NavItem, RenderPosition} from "./enum";
+import {NavItem, RenderPosition, FilterType} from "./enum";
 
 const AUTHORIZATION = `Basic jhkjhio879jkhj=`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
@@ -50,6 +50,7 @@ Promise.all([
     destinationModel.setDestination(destinations);
     offerModel.setOffers(offers);
     remove(loadingComponent);
+    pointsModel.blockFilterButton();
     tripController.render();
   })
   .catch((err) => {
@@ -59,7 +60,9 @@ Promise.all([
 
 buttonAdd.addEventListener(`click`, (evt) => {
   evt.preventDefault();
-  filterController.resetFlter();
+  if (pointsModel.getActiveFilter() !== FilterType.EVERYTHING) {
+    filterController.resetFlter();
+  }
   navigationComponent.resetActiveClass();
   statisticsComponent.hideElement();
   tripController.show();
