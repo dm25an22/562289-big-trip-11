@@ -5,7 +5,7 @@ export default class Points {
   constructor() {
     this._points = [];
     this._filterChangeHandlers = [];
-    this._activeFilter = FilterType.Everything;
+    this._activeFilter = FilterType.EVERYTHING;
   }
 
   getPoints() {

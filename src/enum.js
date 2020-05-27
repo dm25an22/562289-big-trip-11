@@ -14,15 +14,15 @@ export const LabelOfType = {
 };
 
 export const FilterType = {
-  Everything: `everything`,
-  Future: `future`,
-  Past: `past`
+  EVERYTHING: `everything`,
+  FUTURE: `future`,
+  PAST: `past`
 };
 
 export const DefaultData = {
-  saveButtonText: `Save`,
-  deleteButtonText: `Delete`,
-  cancelButtonText: `Cancel`
+  SAVE: `Save`,
+  DELETE: `Delete`,
+  CANCEL: `Cancel`
 };
 
 export const NavItem = {
@@ -37,8 +37,8 @@ export const Mode = {
 };
 
 export const BottonTextOnLoad = {
-  Deleting: `Deleting…`,
-  Saving: `Saving…`
+  DELETING: `Deleting…`,
+  SAVING: `Saving…`
 };
 
 export const RenderPosition = {

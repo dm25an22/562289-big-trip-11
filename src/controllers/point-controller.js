@@ -46,7 +46,7 @@ export default class PointController {
     this._eventPointEdit.setClickOnDeleteHandler((evt) => {
       evt.preventDefault();
       this._eventPointEdit.setData({
-        deleteButtonText: BottonTextOnLoad.Deleting
+        DELETE: BottonTextOnLoad.DELETING
       });
       this._onDataChange(this, point, null);
     });
@@ -56,7 +56,7 @@ export default class PointController {
       const data = this._parseData(formData);
       this._eventPointEdit.borderEdit(false);
       this._eventPointEdit.setData({
-        saveButtonText: BottonTextOnLoad.Saving
+        SAVE: BottonTextOnLoad.SAVING
       });
       this._eventPointEdit.blockForm();
 

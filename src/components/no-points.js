@@ -6,7 +6,7 @@ const createNoTasksTemplate = (load) => {
   );
 };
 
-export default class NoTasks extends AbstractComponent {
+export default class NoPoints extends AbstractComponent {
   constructor(load = false) {
     super();
 

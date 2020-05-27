@@ -16,7 +16,7 @@ export default class FilterController {
   }
 
   resetFlter() {
-    this._onFilterChangeHandler(FilterType.Everything);
+    this._onFilterChangeHandler(FilterType.EVERYTHING);
     document.querySelector(`#filter-everything`).checked = true;
   }
 

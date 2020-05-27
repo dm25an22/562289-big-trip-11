@@ -10,14 +10,14 @@ const getPastPoints = (points) => {
 
 export const getPoitsByFilter = (allPoints, filterName) => {
   switch (filterName) {
-    case FilterType.Everything:
+    case FilterType.EVERYTHING:
       return allPoints;
 
-    case FilterType.Future:
+    case FilterType.FUTURE:
       return getFuturePoints(allPoints);
 
 
-    case FilterType.Past:
+    case FilterType.PAST:
       return getPastPoints(allPoints);
 
   }

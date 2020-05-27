@@ -111,8 +111,8 @@ const createNewEventEditTemplate = (dataPoint, options = {}) => {
   const typeIcon = renderTypeIconMurkup(type);
   const destinationList = rendrDestinationMurkup(destinationNames);
 
-  const saveButtonText = externalData.saveButtonText;
-  const deleteButtonText = externalData.deleteButtonText;
+  const saveButtonText = externalData.SAVE;
+  const deleteButtonText = externalData.DELETE;
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -158,7 +158,7 @@ const createNewEventEditTemplate = (dataPoint, options = {}) => {
 
         <button class="event__save-btn  btn  btn--blue" type="submit">${saveButtonText}</button>
        
-        <button class="event__reset-btn" type="reset">${isNew ? DefaultData.cancelButtonText : deleteButtonText }</button>
+        <button class="event__reset-btn" type="reset">${isNew ? DefaultData.CANCEL : deleteButtonText }</button>
 
         ${isNew ? `` :
       `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
