@@ -1,11 +1,11 @@
-import SortComponent, {SortType} from "../components/sort";
+import SortComponent from "../components/sort";
 import NoPointsComponent from "../components/no-points";
 import InfoDestinationComponent from "../components/info-destination";
 import DayComponent from "../components/day";
 import InfoCostComponent from "../components/info-cost";
 import DayCounterComponent from "../components/day-counter";
 import PointController, {emptyPoint} from "./point-controller";
-import {Mode, RenderPosition} from "../enum";
+import {Mode, RenderPosition, SortType} from "../enum";
 import {HIDDEN_CLASS} from "../consts";
 import {getDurationTravel} from "../date-helpers";
 import {getRodLine, getTotalPrice, getSortedPoints} from "../utils/common";
@@ -89,6 +89,37 @@ export default class TripController {
     this._infoDestinationComponent = new InfoDestinationComponent(roadLine, durationTravel);
     render(this._tripInfoComponent.getElement(), this._infoCostComponent, RenderPosition.BEFOREEND);
     render(this._tripInfoComponent.getElement(), this._infoDestinationComponent, RenderPosition.AFTERBEGIN);
+  }
+
+  createNewPoint() {
+    if (this._createNewPoint) {
+      return;
+    }
+
+    buttonAdd.disabled = true;
+
+    if (!this._pointsModel.getPointsAll().length) {
+      if (this._infoDestinationComponent) {
+        this._infoDestinationComponent.hideElement();
+      }
+    } else {
+      this._sortComponent.resetSort();
+    }
+
+    if (!this._noPointsComponent.getElement().classList.contains(HIDDEN_CLASS)) {
+      this._noPointsComponent.hideElement();
+    }
+
+    this._createNewPoint = new PointController(this._dayCounterComponent.getElement(), this._onDataChange, this._onViewChange, this._destinationModel, this._offerModel);
+    this._createNewPoint.render(emptyPoint, Mode.ADDING, true);
+  }
+
+  removeCreateNewPoint() {
+    if (this._createNewPoint) {
+      this._createNewPoint.destroy();
+      this._createNewPoint = null;
+      buttonAdd.disabled = false;
+    }
   }
 
   _renderEvents(points, onDataChange, onViewChange, isSort = false) {
@@ -200,37 +231,6 @@ export default class TripController {
     }
   }
 
-  createNewPoint() {
-    if (this._createNewPoint) {
-      return;
-    }
-
-    buttonAdd.disabled = true;
-
-    if (!this._pointsModel.getPointsAll().length) {
-      if (this._infoDestinationComponent) {
-        this._infoDestinationComponent.hideElement();
-      }
-    } else {
-      this._sortComponent.resetSort();
-    }
-
-    if (!this._noPointsComponent.getElement().classList.contains(HIDDEN_CLASS)) {
-      this._noPointsComponent.hideElement();
-    }
-
-    this._createNewPoint = new PointController(this._dayCounterComponent.getElement(), this._onDataChange, this._onViewChange, this._destinationModel, this._offerModel);
-    this._createNewPoint.render(emptyPoint, Mode.ADDING, true);
-  }
-
-  removeCreateNewPoint() {
-    if (this._createNewPoint) {
-      this._createNewPoint.destroy();
-      this._createNewPoint = null;
-      buttonAdd.disabled = false;
-    }
-  }
-
   _onViewChange() {
     this.removeCreateNewPoint();
     this._pointControllers.forEach((it) => it.setDefaultView());
@@ -263,12 +263,6 @@ export default class TripController {
     this._pointsModel.blockFilterButton();
   }
 
-  _onSortTypeChangeHandler(typeSort) {
-    this._removeEvents();
-    this._clearHeader();
-    this._renderWithSortType(typeSort);
-  }
-
   _renderWithSortType(typeSort) {
     this.removeCreateNewPoint();
     const tripSortItemDay = document.querySelector(`.trip-sort__item--day`);
@@ -280,6 +274,12 @@ export default class TripController {
       return;
     }
     this._renderEvents(sortedPoints, this._onDataChange, this._onViewChange, true);
+  }
+
+  _onSortTypeChangeHandler(typeSort) {
+    this._removeEvents();
+    this._clearHeader();
+    this._renderWithSortType(typeSort);
   }
 
   _onFilterChange() {

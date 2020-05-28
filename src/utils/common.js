@@ -1,5 +1,5 @@
 import {getDurationTimeInMinutes} from "../date-helpers";
-import {SortType} from "../components/sort";
+import {SortType} from "../enum";
 
 export const getTotalPrice = (data) => {
   let sumPrice = 0;

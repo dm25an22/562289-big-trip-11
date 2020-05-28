@@ -119,6 +119,12 @@ export default class PointController {
     }
   }
 
+  destroy() {
+    remove(this._eventPoint);
+    remove(this._eventPointEdit);
+    window.removeEventListener(`keydown`, this._onEscPress);
+  }
+
   _parseData(formData) {
     const eventDestinationName = formData.get(`event-destination`);
     const eventDestination = this._destinationModel.getDestinationData()
@@ -145,12 +151,6 @@ export default class PointController {
       "date_to": new Date(formData.get(`event-end-time`)),
       "is_favorite": isFavorite
     });
-  }
-
-  destroy() {
-    remove(this._eventPoint);
-    remove(this._eventPointEdit);
-    window.removeEventListener(`keydown`, this._onEscPress);
   }
 
   _replacePointToEdit() {

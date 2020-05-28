@@ -240,6 +240,11 @@ export default class EventEdit extends AbstractSmartComponent {
     this._subscribeOnEvents();
   }
 
+  rerender() {
+    super.rerender();
+    this._applyFlatpickr();
+  }
+
   getTemplate() {
     return createNewEventEditTemplate(this._data, {
       type: this._type,
@@ -253,6 +258,11 @@ export default class EventEdit extends AbstractSmartComponent {
       isNew: this._isNew,
       externalData: this._externalData
     });
+  }
+
+  setData(data) {
+    this._externalData = Object.assign({}, DefaultData, data);
+    this.rerender();
   }
 
   getData() {
@@ -271,6 +281,20 @@ export default class EventEdit extends AbstractSmartComponent {
     this.getElement().style.border = `${boolean ? `1px solid red` : ``}`;
   }
 
+  reset() {
+    const data = this._data;
+    this._eventPrice = data.eventPrice;
+    this._type = data.type;
+    this._offers = data.offer;
+    this._destinationName = data.destination.name;
+    this._photos = data.destination.pictures.map((it) => it);
+    this._description = data.destination.description;
+    this._start = data.start;
+    this._end = data.end;
+
+    this.rerender();
+  }
+
   recoveryListeners() {
     this.setSubmitHandler(this._setSubmitHandler);
     this.setClickOnRollupBtnHandler(this._setClickOnRollupBtnHandler);
@@ -278,7 +302,6 @@ export default class EventEdit extends AbstractSmartComponent {
     this.setClickOnDeleteHandler(this._setClickOnDeleteHandler);
     this._subscribeOnEvents();
   }
-
 
   _applyFlatpickr() {
     resetFlatpicer(this._flatpickrStart);
@@ -304,17 +327,6 @@ export default class EventEdit extends AbstractSmartComponent {
       defaultDate: this._end,
       minDate: this._start,
     }));
-  }
-
-  setData(data) {
-    this._externalData = Object.assign({}, DefaultData, data);
-    this.rerender();
-  }
-
-
-  rerender() {
-    super.rerender();
-    this._applyFlatpickr();
   }
 
   _getAvailableOffers() {
@@ -396,20 +408,6 @@ export default class EventEdit extends AbstractSmartComponent {
       }
     });
 
-  }
-
-  reset() {
-    const data = this._data;
-    this._eventPrice = data.eventPrice;
-    this._type = data.type;
-    this._offers = data.offer;
-    this._destinationName = data.destination.name;
-    this._photos = data.destination.pictures.map((it) => it);
-    this._description = data.destination.description;
-    this._start = data.start;
-    this._end = data.end;
-
-    this.rerender();
   }
 
   setClickOnDeleteHandler(handler) {

@@ -1,10 +1,5 @@
 import AbstractComponent from "./abstract-component";
-
-export const SortType = {
-  EVENT: `event`,
-  TIME: `time`,
-  PRICE: `price`
-};
+import {SortType} from "../enum";
 
 const createSortTemplate = () => {
   return (

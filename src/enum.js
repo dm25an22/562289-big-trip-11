@@ -13,6 +13,12 @@ export const LabelOfType = {
   'check-in': LABEL_IN
 };
 
+export const SortType = {
+  EVENT: `event`,
+  TIME: `time`,
+  PRICE: `price`
+};
+
 export const FilterType = {
   EVERYTHING: `everything`,
   FUTURE: `future`,
