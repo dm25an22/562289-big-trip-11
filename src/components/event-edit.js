@@ -7,7 +7,7 @@ import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import "flatpickr/dist/themes/material_blue.css";
 
-export const renderTypeIconMurkup = (type) => {
+const renderTypeIconMurkup = (type) => {
   return (
     `<div class="event__type-list">
     <fieldset class="event__type-group">
@@ -71,7 +71,7 @@ export const renderTypeIconMurkup = (type) => {
   );
 };
 
-export const renderOffersMurkup = (typeOffers, offers) => {
+const renderOffersMurkup = (typeOffers, offers) => {
   return typeOffers.map((it) => {
     const {title, price} = it;
     return (
@@ -87,7 +87,7 @@ export const renderOffersMurkup = (typeOffers, offers) => {
   }).join(`\n`);
 };
 
-export const renderImgMurkup = (photos) => {
+const renderImgMurkup = (photos) => {
   return photos.map((photo) => {
     const {src, description} = photo;
     return (

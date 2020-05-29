@@ -3,7 +3,7 @@ import {LabelOfType} from "../enum";
 import {firstLetterToUpper} from "../utils/common";
 import AbstractComponent from "./abstract-component";
 
-export const renderOffers = (offers) => {
+const renderOffers = (offers) => {
   return offers.map((it) => {
     return `<li class="event__offer">
       <span class="event__offer-title">${it.title}</span>

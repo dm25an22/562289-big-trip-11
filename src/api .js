@@ -1,4 +1,4 @@
-import Point from "./models/point-model";
+import Point from "./models/point";
 
 const Method = {
   GET: `GET`,

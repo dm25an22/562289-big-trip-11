@@ -102,8 +102,6 @@ export default class TripController {
       if (this._infoDestinationComponent) {
         this._infoDestinationComponent.hideElement();
       }
-    } else {
-      this._sortComponent.resetSort();
     }
 
     if (!this._noPointsComponent.getElement().classList.contains(HIDDEN_CLASS)) {
@@ -183,6 +181,7 @@ export default class TripController {
           .then((pointModel) => {
             this._pointsModel.addPoint(pointModel);
             pointController.destroy();
+            this._sortComponent.resetSort();
             this._updateTripEvents();
             this._isExistPoints();
             buttonAdd.disabled = false;

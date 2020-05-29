@@ -1,11 +1,11 @@
 import EventPointComponent from "../components/event-point";
 import EventEditComponent from "../components/event-edit";
 import {render, replace, remove} from "../utils/render";
-import PointModel from "../models/point-model";
+import PointModel from "../models/point";
 import {SHAKE_ANIMATION_TIMEOUT, OFFER_ID_PREFIX} from "../consts";
 import {BottonTextOnLoad, Mode, RenderPosition} from "../enum";
 
-export const emptyPoint = {
+const emptyPoint = {
   type: `taxi`,
   destination: [],
   eventPrice: ``,
@@ -182,3 +182,5 @@ export default class PointController {
   }
 
 }
+
+export {emptyPoint};
