@@ -163,6 +163,8 @@ export default class Statistic extends AbstractSmartComponent {
       }
     });
 
+    console.log(moneyData)
+
     return moneyData.sort((a, b) => b.cost - a.cost);
   }
 
