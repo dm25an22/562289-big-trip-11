@@ -17,8 +17,7 @@ const tripEvents = document.querySelector(`.trip-events`);
 const tripEventsFirstChild = tripEvents.querySelector(`:first-child`);
 
 const renderPoint = (container, points, onDataChange, onViewChange, destinationModel, offerModel) => {
-
-  return points.sort((a, b) => a.start - b.start).map((it) => {
+  return points.map((it) => {
     const pointController = new PointController(container, onDataChange, onViewChange, destinationModel, offerModel);
     pointController.render(it, Mode.DEFAULT);
 
@@ -163,6 +162,7 @@ export default class TripController {
         const day = dayComponent.getElement().querySelector(`.trip-events__list`);
 
         const pointsFilter = points.filter((el) => moment(el.start).format(`YYYY-MM-DD`) === date);
+        pointsFilter.sort((a, b) => a.start - b.start);
 
         const newPoint = renderPoint(day, pointsFilter, onDataChange, onViewChange, this._destinationModel, this._offerModel);
         pointControllers = pointControllers.concat(newPoint);
