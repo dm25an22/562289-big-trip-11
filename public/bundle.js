@@ -28242,8 +28242,7 @@ const tripEvents = document.querySelector(`.trip-events`);
 const tripEventsFirstChild = tripEvents.querySelector(`:first-child`);
 
 const renderPoint = (container, points, onDataChange, onViewChange, destinationModel, offerModel) => {
-
-  return points.sort((a, b) => a.start - b.start).map((it) => {
+  return points.map((it) => {
     const pointController = new _point_controller__WEBPACK_IMPORTED_MODULE_6__["default"](container, onDataChange, onViewChange, destinationModel, offerModel);
     pointController.render(it, _enum__WEBPACK_IMPORTED_MODULE_7__["Mode"].DEFAULT);
 
@@ -28388,6 +28387,7 @@ class TripController {
         const day = dayComponent.getElement().querySelector(`.trip-events__list`);
 
         const pointsFilter = points.filter((el) => moment__WEBPACK_IMPORTED_MODULE_12___default()(el.start).format(`YYYY-MM-DD`) === date);
+        pointsFilter.sort((a, b) => a.start - b.start);
 
         const newPoint = renderPoint(day, pointsFilter, onDataChange, onViewChange, this._destinationModel, this._offerModel);
         pointControllers = pointControllers.concat(newPoint);
