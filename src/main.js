@@ -11,7 +11,7 @@ import {render, remove} from "./utils/render";
 import Statistics from "./components/statistic";
 import {NavItem, RenderPosition, FilterType} from "./enum";
 
-const AUTHORIZATION = `Basic jhkjhio879jkhj=`;
+const AUTHORIZATION = `Basic jhkjhio879khj=`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
 const api = new API(END_POINT, AUTHORIZATION);
 const pointsModel = new PointsModel();

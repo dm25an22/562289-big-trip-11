@@ -330,7 +330,7 @@ export default class EventEdit extends AbstractSmartComponent {
   }
 
   _getAvailableOffers() {
-    return this._offerModel.getOffersData().filter((it) => it.type === this._type)[0].offers;
+    return this._offerModel.getOffersData().find((it) => it.type === this._type).offers;
   }
 
   _subscribeOnEvents() {
@@ -344,8 +344,8 @@ export default class EventEdit extends AbstractSmartComponent {
         const avaibleOffers = this._getAvailableOffers();
 
         if (isChecked) {
-          const addOffer = avaibleOffers.filter((it) => it.title === titleFromInput);
-          this._offers.push(addOffer[0]);
+          const addOffer = avaibleOffers.find((it) => it.title === titleFromInput);
+          this._offers.push(addOffer);
         } else {
           this._offers = this._offers.filter((it) => it.title !== titleFromInput);
         }
@@ -400,7 +400,7 @@ export default class EventEdit extends AbstractSmartComponent {
         this._destinationName = evt.target.value;
         const destinationsAll = this._destinationModel.getDestinationData();
 
-        const destination = destinationsAll.filter((it) => it.name === this._destinationName)[0];
+        const destination = destinationsAll.find((it) => it.name === this._destinationName);
         this._description = destination.description;
         this._photos = destination.pictures.map((it) => it);
 

@@ -27080,7 +27080,7 @@ class EventEdit extends _abstract_smart_component__WEBPACK_IMPORTED_MODULE_1__["
   }
 
   _getAvailableOffers() {
-    return this._offerModel.getOffersData().filter((it) => it.type === this._type)[0].offers;
+    return this._offerModel.getOffersData().find((it) => it.type === this._type).offers;
   }
 
   _subscribeOnEvents() {
@@ -27094,8 +27094,8 @@ class EventEdit extends _abstract_smart_component__WEBPACK_IMPORTED_MODULE_1__["
         const avaibleOffers = this._getAvailableOffers();
 
         if (isChecked) {
-          const addOffer = avaibleOffers.filter((it) => it.title === titleFromInput);
-          this._offers.push(addOffer[0]);
+          const addOffer = avaibleOffers.find((it) => it.title === titleFromInput);
+          this._offers.push(addOffer);
         } else {
           this._offers = this._offers.filter((it) => it.title !== titleFromInput);
         }
@@ -27150,7 +27150,7 @@ class EventEdit extends _abstract_smart_component__WEBPACK_IMPORTED_MODULE_1__["
         this._destinationName = evt.target.value;
         const destinationsAll = this._destinationModel.getDestinationData();
 
-        const destination = destinationsAll.filter((it) => it.name === this._destinationName)[0];
+        const destination = destinationsAll.find((it) => it.name === this._destinationName);
         this._description = destination.description;
         this._photos = destination.pictures.map((it) => it);
 
@@ -27788,8 +27788,6 @@ class Statistic extends _abstract_smart_component__WEBPACK_IMPORTED_MODULE_2__["
       }
     });
 
-    console.log(moneyData)
-
     return moneyData.sort((a, b) => b.cost - a.cost);
   }
 
@@ -28244,7 +28242,8 @@ const tripEvents = document.querySelector(`.trip-events`);
 const tripEventsFirstChild = tripEvents.querySelector(`:first-child`);
 
 const renderPoint = (container, points, onDataChange, onViewChange, destinationModel, offerModel) => {
-  return points.map((it) => {
+
+  return points.sort((a, b) => a.start - b.start).map((it) => {
     const pointController = new _point_controller__WEBPACK_IMPORTED_MODULE_6__["default"](container, onDataChange, onViewChange, destinationModel, offerModel);
     pointController.render(it, _enum__WEBPACK_IMPORTED_MODULE_7__["Mode"].DEFAULT);
 
@@ -28323,6 +28322,7 @@ class TripController {
       return;
     }
 
+    this._pointControllers.forEach((it) => it.setDefaultView());
     buttonAdd.disabled = true;
 
     if (!this._pointsModel.getPointsAll().length) {
@@ -28750,7 +28750,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const AUTHORIZATION = `Basic jhkjhio879jkhj=`;
+const AUTHORIZATION = `Basic jhkjhio879khj=`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
 const api = new _api___WEBPACK_IMPORTED_MODULE_0__["default"](END_POINT, AUTHORIZATION);
 const pointsModel = new _models_points__WEBPACK_IMPORTED_MODULE_5__["default"]();

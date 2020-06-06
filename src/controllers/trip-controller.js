@@ -17,7 +17,8 @@ const tripEvents = document.querySelector(`.trip-events`);
 const tripEventsFirstChild = tripEvents.querySelector(`:first-child`);
 
 const renderPoint = (container, points, onDataChange, onViewChange, destinationModel, offerModel) => {
-  return points.map((it) => {
+
+  return points.sort((a, b) => a.start - b.start).map((it) => {
     const pointController = new PointController(container, onDataChange, onViewChange, destinationModel, offerModel);
     pointController.render(it, Mode.DEFAULT);
 
@@ -96,6 +97,7 @@ export default class TripController {
       return;
     }
 
+    this._pointControllers.forEach((it) => it.setDefaultView());
     buttonAdd.disabled = true;
 
     if (!this._pointsModel.getPointsAll().length) {
